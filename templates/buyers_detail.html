@@ -1,0 +1,1219 @@
+{% extends 'base/index.html' %}
+{% block title %}
+    <title>用户管理</title>
+    <style>
+
+        .layui-form-item .layui-form-label{
+            padding: 0 5px 0 35px;
+            line-height: 40px;
+            width: auto;
+        }
+
+        .detail{
+            margin-bottom: 10px;
+        }
+
+        #editBuyer .layui-input-block,#editFamily .layui-input-block, #editCard .layui-input-block
+        ,#editMember .layui-input-block,#editAddress .layui-input-block,#editOrder .layui-input-block{
+            padding-left: 50px;
+        }
+
+        table tr th{
+            background-color: #f2f2f2;
+        }
+
+        .table tbody tr td{
+              overflow: hidden;
+              text-overflow:ellipsis;
+              white-space: nowrap;
+         }
+
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb" style="font-size: 18px">
+        <li><a href="">首页</a></li>
+        <li><a href="{% url 'buyer_list' %}">买家信息</a></li>
+        <li><a style="color: #666;" href="javascript:;">买员详情</a></li>
+    </ol>
+{% endblock %}
+
+{% block page-content %}
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>设备信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editDeviceBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editDeviceBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+{#            <button id="reloadBtn" type="button" class="btn btn-default btn-detail">刷新</button>#}
+        </div>
+        <table class="table table-bordered" id="tbDeviceInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">买家编号</th>
+                    <th style="width: 25%;">IP</th>
+                    <th style="width: 25%;">IP买家名</th>
+                    <th style="width: 25%;">IP密码</th>
+                </tr>
+                <tr>
+                    <td id="number"></td>
+                    <td id="ip"></td>
+                    <td id="ip_name"></td>
+                    <td id="ip_password"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>买家信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editBuyerBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editBuyerBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+{#            <button id="reloadBtn" type="button" class="btn btn-default btn-detail">刷新</button>#}
+        </div>
+
+        <table class="table table-bordered" id="tbBuyerInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">平台</th>
+                    <th style="width: 25%;">站点</th>
+                    <th style="width: 25%;">买家姓名</th>
+                    <th style="width: 25%;">UA</th>
+                </tr>
+                <tr>
+                    <td id="platform"></td>
+                    <td id="buyer_site"></td>
+                    <td id="buyer_name"></td>
+                    <td id="buyer_ua"></td>
+                </tr>
+                <tr>
+                    <th style="width: 25%;">买家状态</th>
+                    <th style="width: 25%;">累计购买金额</th>
+                    <th style="width: 25%;">12月累计CC金额</th>
+                    <th style="width: 25%;">Cookie</th>
+                </tr>
+                <tr>
+                    <td id="buyer_status"></td>
+                    <td id="total_money"></td>
+                    <td id="one_year_money"></td>
+                    <td id="buyer_cookie"></td>
+                </tr>
+                <tr>
+                    <th style="width: 25%;">注册手机</th>
+                    <th style="width: 25%;">注册邮箱</th>
+                    <th style="width: 25%;">买家登录密码</th>
+                    <th style="width: 25%;">邮箱密码</th>
+                </tr>
+                <tr>
+                    <td id="buyer_phone"></td>
+                    <td id="buyer_email"></td>
+                    <td id="buyer_email_password"></td>
+                    <td id="buyer_login_password"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>家庭信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editFamilyBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editFamilyBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+{#            <button id="reloadBtn" type="button" class="btn btn-default btn-detail">刷新</button>#}
+        </div>
+        <table class="table table-bordered" id="tbFamilyInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+
+                    <th style="width: 33%;">配偶姓名</th>
+                    <th style="width: 33%;">配偶邮箱</th>
+                    <th style="width: 33%;">配偶邮箱密码</th>
+                </tr>
+                <tr>
+                    <td id="partner_name"></td>
+                    <td id="partner_email"></td>
+                    <td id="partner_email_password"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>社交信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editInternetBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editInternetBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+        </div>
+        <table class="table table-bordered" id="tbInternetInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">Facebook</th>
+                    <th style="width: 25%;">Gmail</th>
+                    <th style="width: 25%;">Twitter</th>
+                    <th style="width: 25%;">Youtube</th>
+                </tr>
+                <tr>
+                    <td id="facebook"></td>
+                    <td id="gmail"></td>
+                    <td id="twitter"></td>
+                    <td id="youtube"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>信用卡信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editCardBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editCardBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+        </div>
+        <table class="table table-bordered" id="tbCardInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">信用卡卡号</th>
+                    <th style="width: 25%;">信用卡过期时间</th>
+                    <th style="width: 25%;">信用卡_CVV</th>
+                    <th style="width: 25%;">信用卡来源</th>
+                </tr>
+                <tr>
+                    <td id="credit_card"></td>
+                    <td id="credit_card_expiry"></td>
+                    <td id="credit_card_cvv"></td>
+                    <td id="credit_card_origin"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>会员状态</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editMemberBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editMemberBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+        </div>
+        <table class="table table-bordered" id="tbMemberInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">会员状态</th>
+                    <th style="width: 25%;">申请时间</th>
+                    <th style="width: 25%;">过期时间</th>
+                </tr>
+                <tr>
+                    <td id="member_status"></td>
+                    <td id="member_apply_time"></td>
+                    <td id="member_expiry_time"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>默认收货地址</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editAddressBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editAddressBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+        </div>
+
+        <table class="table table-bordered" id="tbAddressInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">First Name</th>
+                    <th style="width: 25%;">Last Name</th>
+                    <th style="width: 25%;">Address1</th>
+                    <th style="width: 25%;">City</th>
+                </tr>
+                <tr>
+                    <td id="first_name"></td>
+                    <td id="last_name"></td>
+                    <td id="address1"></td>
+                    <td id="city"></td>
+                </tr>
+                <tr>
+                    <th style="width: 25%;">State</th>
+                    <th style="width: 25%;">Zip</th>
+                    <th style="width: 25%;">phones</th>
+                    <th style="width: 25%;"></th>
+                </tr>
+                <tr>
+                    <td id="state"></td>
+                    <td id="zip"></td>
+                    <td id="phones"></td>
+                    <td id=""></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>订单任务列表</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editOrderBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editOrderBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+        </div>
+        <table class="table table-bordered" id="tbOrderInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">任务时间</th>
+                    <th style="width: 25%;">任务类型</th>
+                    <th style="width: 25%;">订单号</th>
+                    <th style="width: 25%;">完成时间</th>
+                </tr>
+                <tr>
+                    <td id="order_time"></td>
+                    <td id="order_task_type"></td>
+                    <td id="order_number"></td>
+                    <td id="order_finish_time"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="/backend/orders/list?number={{ number }}"><strong>最近任务列表</strong></a>
+
+    <input id="editId" type="hidden">
+
+{% endblock %}
+
+{% block extra-bottom-js %}
+    <script>
+
+        // csrf
+        function csrftoken() {
+            /*********** csrftoken开始****************/
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            /*********** csrftoken结束****************/
+        }
+
+        // layui
+        layui.use(['element', 'table', 'form', 'jquery', 'laydate'], function() {
+            var element = layui.element,
+            table = layui.table,
+            $ = layui.jquery,
+            myForm = layui.form;
+            laydate = layui.laydate;
+
+            // 日期正则表达式
+            var date_reg = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+
+            //日期范围
+            laydate.render({
+                elem: '#comment_last_time'
+                ,format: 'MM月dd日yyyy年'
+            });
+            laydate.render({
+                elem: '#o_first_time'
+                ,range: true
+            });
+
+            initTable();
+
+            //判断是否是手机
+            var mobile_flag = isMobile();
+            if(mobile_flag){
+                // layer.msg('手机');
+                $('table tr td').each(function () {
+                    $(this).on('click', function () {
+                        if($(this).find('input').length == 0){
+                            var top = $(this).offset().top - $(document).scrollTop() + 'px';
+                            var left = $(this).offset().left + 'px';
+                            if (this.offsetWidth < this.scrollWidth) {
+                                var that = this;
+                                var text = $(this).text();
+                                layer.open({
+                                    type: 1,
+                                    {#offset: [top, left],#}
+                                    {#area: ['21%'],#}
+                                    shade: false,
+                                    title: false, //不显示标题
+                                    content: text, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                                });
+                            }
+                        }
+                    })
+                });
+
+            }else{
+                // layer.msg('电脑');
+                // 单元格占一行，点击显示全部内容
+                $('table tr td').each(function () {
+                $(this).on('click', function () {
+                    if($(this).find('input').length == 0){
+                        var top = $(this).offset().top - $(document).scrollTop() + 'px';
+                        var left = $(this).offset().left + 'px';
+                        if (this.offsetWidth < this.scrollWidth) {
+                            var that = this;
+                            var text = $(this).text();
+                            layer.open({
+                                type: 1,
+                                offset: [top, left],
+                                area: ['21%'],
+                                shade: false,
+                                title: false, //不显示标题
+                                content: text, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                            });
+                        }
+                    }
+                })
+            });
+            }
+
+            $("#editDeviceBtn").click(function () {
+                // if($("#editDeviceBtn").attr('has-edit') != 1){
+                if($("input[name='number']").length == 0){
+                    var number_text = $("#number").text();
+                    var input = '<input type="text" name="number" style="width: 100%" class="form-class" value="'+ number_text +'">'
+                    $("#number").html(input);
+
+                    var ip_text = $("#ip").text();
+                    var input = '<input type="text" name="ip" style="width: 100%" class="form-class" value="'+ ip_text +'">'
+                    $("#ip").html(input);
+
+                    var ip_name_text = $("#ip_name").text();
+                    var input = '<input type="text" name="ip_name" style="width: 100%" class="form-class" value="'+ ip_name_text +'">'
+                    $("#ip_name").html(input);
+
+                    var ip_password_text = $("#ip_password").text();
+                    var input = '<input type="text" name="ip_password" style="width: 100%" class="form-class" value="'+ ip_password_text +'">'
+                    $("#ip_password").html(input);
+                }
+                $("#editDeviceBtn").attr('has-edit', 1);
+
+            });
+
+            $("#editDeviceBtnSave").click(function () {
+                $("#editDeviceBtn").attr('has-edit', 0);
+                if($("input[name='number']").length != 0){
+                    var ip_password = $.trim($("input[name='ip_password']").val());
+                    var number = $.trim($("input[name='number']").val());
+                    var ip = $.trim($("input[name='ip']").val());
+                    var ip_name = $.trim($("input[name='ip_name']").val());
+
+                    if(!ip){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+                    if(!ip_name){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+                    if(!number){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/device/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'ip_password': ip_password,
+                            'number': number,
+                            'ip': ip,
+                            'ip_name': ip_name,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#tbDeviceInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg("编辑失败", {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            $("#editBuyerBtn").click(function () {
+                // if($("#editBuyerBtn").attr('has-edit') != 1){
+                if($("input[name='platform']").length == 0){
+                    var platform_text = $("#platform").text();
+                    var input = '<input type="text" name="platform" style="width: 100%" class="form-class" value="'+ platform_text +'">'
+                    $("#platform").html(input);
+
+                    var buyer_site_text = $("#buyer_site").text();
+                    var input = '<input type="text" name="buyer_site" style="width: 100%" class="form-class" value="'+ buyer_site_text +'">'
+                    $("#buyer_site").html(input);
+
+                    var buyer_name_text = $("#buyer_name").text();
+                    var input = '<input type="text" name="buyer_name" style="width: 100%" class="form-class" value="'+ buyer_name_text +'">'
+                    $("#buyer_name").html(input);
+
+                    var buyer_ua_text = $("#buyer_ua").text();
+                    var input = '<input type="text" name="buyer_ua" style="width: 100%" class="form-class" value="'+ buyer_ua_text +'">'
+                    $("#buyer_ua").html(input);
+
+                    var buyer_cookie_text = $("#buyer_cookie").text();
+                    var input = '<input type="text" name="buyer_cookie" style="width: 100%" class="form-class" value="'+ buyer_cookie_text +'">'
+                    $("#buyer_cookie").html(input);
+
+                    var buyer_status_text = $("#buyer_status").text();
+                    var input = '<input type="text" name="buyer_status" style="width: 100%" class="form-class" value="'+ buyer_status_text +'">'
+                    $("#buyer_status").html(input);
+
+                    var buyer_email_text = $("#buyer_email").text();
+                    var input = '<input type="text" name="buyer_email" style="width: 100%" class="form-class" value="'+ buyer_email_text +'">'
+                    $("#buyer_email").html(input);
+
+                    var buyer_phone_text = $("#buyer_phone").text();
+                    var input = '<input type="text" name="buyer_phone" style="width: 100%" class="form-class" value="'+ buyer_phone_text +'">'
+                    $("#buyer_phone").html(input);
+
+                    var buyer_email_password_text = $("#buyer_email_password").text();
+                    var input = '<input type="text" name="buyer_email_password" style="width: 100%" class="form-class" value="'+ buyer_email_password_text +'">'
+                    $("#buyer_email_password").html(input);
+
+                    var buyer_login_password_text = $("#buyer_login_password").text();
+                    var input = '<input type="text" name="buyer_login_password" style="width: 100%" class="form-class" value="'+ buyer_login_password_text +'">'
+                    $("#buyer_login_password").html(input);
+                }
+                $("#editBuyerBtn").attr('has-edit', 1)
+
+            });
+
+            $("#editBuyerBtnSave").click(function () {
+                $("#editBuyerBtn").attr('has-edit', 0);
+                if($("input[name='platform']").length != 0){
+                    var platform = $.trim($("input[name='platform']").val());
+                    var buyer_site = $.trim($("input[name='buyer_site']").val());
+                    var buyer_name = $.trim($("input[name='buyer_name']").val());
+                    var buyer_ua = $.trim($("input[name='buyer_ua']").val());
+                    var buyer_status = $.trim($("input[name='buyer_status']").val());
+                    var buyer_cookie = $.trim($("input[name='buyer_cookie']").val());
+                    var buyer_phone = $.trim($("input[name='buyer_phone']").val());
+                    var buyer_email = $.trim($("input[name='buyer_email']").val());
+                    var buyer_email_password = $.trim($("input[name='buyer_email_password']").val());
+                    var buyer_login_password = $.trim($("input[name='buyer_login_password']").val());
+
+                    if(!buyer_name){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/buyer/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'platform': platform,
+                            'buyer_site': buyer_site,
+                            'buyer_name': buyer_name,
+                            'buyer_ua': buyer_ua,
+                            'buyer_status': buyer_status,
+                            'buyer_cookie': buyer_cookie,
+                            'buyer_phone': buyer_phone,
+                            'buyer_email': buyer_email,
+                            'buyer_email_password': buyer_email_password,
+                            'buyer_login_password': buyer_login_password,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#editBuyerInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg("编辑失败", {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            $("#editFamilyBtn").click(function () {
+                if($("input[name='partner_name']").length == 0){
+                    var partner_name_text = $("#partner_name").text();
+                    var input = '<input type="text" name="partner_name" style="width: 100%" class="form-class" value="'+ partner_name_text +'">'
+                    $("#partner_name").html(input);
+
+                    var partner_email_text = $("#partner_email").text();
+                    var input = '<input type="text" name="partner_email" style="width: 100%" class="form-class" value="'+ partner_email_text +'">'
+                    $("#partner_email").html(input);
+
+                    var partner_email_password_text = $("#partner_email_password").text();
+                    var input = '<input type="text" name="partner_email_password" style="width: 100%" class="form-class" value="'+ partner_email_password_text +'">'
+                    $("#partner_email_password").html(input);
+                }
+                $("#editFamilyBtn").attr('has-edit', 1);
+
+            });
+
+            $("#editFamilyBtnSave").click(function () {
+                $("#editFamilyBtn").attr('has-edit', 0);
+                if($("input[name='partner_name']").length != 0){
+                    var partner_name = $.trim($("input[name='partner_name']").val());
+                    var partner_email = $.trim($("input[name='partner_email']").val());
+                    var partner_email_password = $.trim($("input[name='partner_email_password']").val());
+
+                    if(!partner_name){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+                    if(!partner_email){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/family/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'partner_name': partner_name,
+                            'partner_email': partner_email,
+                            'partner_email_password': partner_email_password,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#editFamilyInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg("编辑失败", {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            $("#editInternetBtn").click(function () {
+                if($("input[name='facebook']").length == 0){
+                    var facebook_text = $("#facebook").text();
+                    var input = '<input type="text" name="facebook" style="width: 100%" class="form-class" value="'+ facebook_text +'">'
+                    $("#facebook").html(input);
+
+                    var gmail_text = $("#gmail").text();
+                    var input = '<input type="text" name="gmail" style="width: 100%" class="form-class" value="'+ gmail_text +'">'
+                    $("#gmail").html(input);
+
+                    var twitter_text = $("#twitter").text();
+                    var input = '<input type="text" name="twitter" style="width: 100%" class="form-class" value="'+ twitter_text +'">'
+                    $("#twitter").html(input);
+
+                    var youtube_text = $("#youtube").text();
+                    var input = '<input type="text" name="youtube" style="width: 100%" class="form-class" value="'+ youtube_text +'">'
+                    $("#youtube").html(input);
+                }
+                $("#editInternetBtn").attr('has-edit', 1)
+
+            });
+
+            $("#editInternetBtnSave").click(function () {
+                $("#editInternetBtn").attr('has-edit', 0)
+                if($("input[name='facebook']").length != 0){
+                    var facebook = $.trim($("input[name='facebook']").val());
+                    var gmail = $.trim($("input[name='gmail']").val());
+                    var twitter = $.trim($("input[name='twitter']").val());
+                    var youtube = $.trim($("input[name='youtube']").val());
+
+
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/internet/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'facebook': facebook,
+                            'twitter': twitter,
+                            'gmail': gmail,
+                            'youtube': youtube,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#editInternetInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg("编辑失败", {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            $("#editCardBtn").click(function () {
+                if($("input[name='credit_card']").length == 0){
+                    var credit_card_text = $("#credit_card").text();
+                    var input = '<input type="text" name="credit_card" style="width: 100%" class="form-class" value="'+ credit_card_text +'">'
+                    $("#credit_card").html(input);
+
+                    var credit_card_expiry_text = $("#credit_card_expiry").text();
+                    var input = '<input type="text" name="credit_card_expiry" style="width: 100%" class="form-class" value="'+ credit_card_expiry_text +'">'
+                    $("#credit_card_expiry").html(input);
+
+                    var credit_card_cvv_text = $("#credit_card_cvv").text();
+                    var input = '<input type="text" name="credit_card_cvv" style="width: 100%" class="form-class" value="'+ credit_card_cvv_text +'">'
+                    $("#credit_card_cvv").html(input);
+
+                    var credit_card_origin_text = $("#credit_card_origin").text();
+                    var input = '<input type="text" name="credit_card_origin" style="width: 100%" class="form-class" value="'+ credit_card_origin_text +'">'
+                    $("#credit_card_origin").html(input);
+                }
+                $("#editCardBtn").attr('has-edit', 1)
+
+            });
+
+            $("#editCardBtnSave").click(function () {
+                $("#editCardBtn").attr('has-edit', 0);
+                if($("input[name='credit_card']").length != 0){
+                    var credit_card = $.trim($("input[name='credit_card']").val());
+                    var credit_card_expiry = $.trim($("input[name='credit_card_expiry']").val());
+                    var credit_card_cvv = $.trim($("input[name='credit_card_cvv']").val());
+                    var credit_card_origin = $.trim($("input[name='credit_card_origin']").val());
+
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+
+                    if(credit_card_expiry){
+                        if(!date_reg.test(credit_card_expiry)){
+                            layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                            return false
+                        }
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/card/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'credit_card': credit_card,
+                            'credit_card_expiry': credit_card_expiry,
+                            'credit_card_cvv': credit_card_cvv,
+                            'credit_card_origin': credit_card_origin,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#editCardInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg(arg.msg, {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            $("#editMemberBtn").click(function () {
+                if($("input[name='member_status']").length == 0){
+                    var member_status_text = $("#member_status").text();
+                    var input = '<input type="text" name="member_status" style="width: 100%" class="form-class" value="'+ member_status_text +'">'
+                    $("#member_status").html(input);
+
+                    var member_apply_time_text = $("#member_apply_time").text();
+                    var input = '<input type="text" name="member_apply_time" style="width: 100%" class="form-class" value="'+ member_apply_time_text +'">'
+                    $("#member_apply_time").html(input);
+
+                    var member_expiry_time_text = $("#member_expiry_time").text();
+                    var input = '<input type="text" name="member_expiry_time" style="width: 100%" class="form-class" value="'+ member_expiry_time_text +'">'
+                    $("#member_expiry_time").html(input);
+                }
+                $("#editMemberBtn").attr('has-edit', 1)
+
+            });
+
+            $("#editMemberBtnSave").click(function () {
+                $("#editMemberBtn").attr('has-edit', 0)
+                if($("input[name='member_status']").length != 0){
+                    var member_status = $.trim($("input[name='member_status']").val());
+                    var member_apply_time = $.trim($("input[name='member_apply_time']").val());
+                    var member_expiry_time = $.trim($("input[name='member_expiry_time']").val());
+
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+                    if(!date_reg.test(member_apply_time)){
+                        layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                        return false
+                    }
+                    if(!date_reg.test(member_expiry_time)){
+                        layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                        return false
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/member/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'member_status': member_status,
+                            'member_apply_time': member_apply_time,
+                            'member_expiry_time': member_expiry_time,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#editCardInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg(arg.msg, {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            $("#editAddressBtn").click(function () {
+                if($("input[name='first_name']").length == 0){
+                    var first_name_text = $("#first_name").text();
+                    var input = '<input type="text" name="first_name" style="width: 100%" class="form-class" value="'+ first_name_text +'">'
+                    $("#first_name").html(input);
+
+                    var last_name_text = $("#last_name").text();
+                    var input = '<input type="text" name="last_name" style="width: 100%" class="form-class" value="'+ last_name_text +'">'
+                    $("#last_name").html(input);
+
+                    var address1_text = $("#address1").text();
+                    var input = '<input type="text" name="address1" style="width: 100%" class="form-class" value="'+ address1_text +'">'
+                    $("#address1").html(input);
+
+                    var city_text = $("#city").text();
+                    var input = '<input type="text" name="city" style="width: 100%" class="form-class" value="'+ city_text +'">'
+                    $("#city").html(input);
+
+                    var state_text = $("#state").text();
+                    var input = '<input type="text" name="state" style="width: 100%" class="form-class" value="'+ state_text +'">'
+                    $("#state").html(input);
+
+                    var zip_text = $("#zip").text();
+                    var input = '<input type="text" name="zip" style="width: 100%" class="form-class" value="'+ zip_text +'">'
+                    $("#zip").html(input);
+
+                    var phones_text = $("#phones").text();
+                    var input = '<input type="text" name="phones" style="width: 100%" class="form-class" value="'+ phones_text +'">'
+                    $("#phones").html(input);
+                }
+                $("#editAddressBtn").attr('has-edit', 1);
+
+            });
+
+            $("#editAddressBtnSave").click(function () {
+                $("#editAddressBtn").attr('has-edit', 0);
+                if($("input[name='address1']").length != 0){
+                    var first_name = $.trim($("input[name='first_name']").val());
+                    var last_name = $.trim($("input[name='last_name']").val());
+                    var address1 = $.trim($("input[name='address1']").val());
+                    var city = $.trim($("input[name='city']").val());
+                    var zip = $.trim($("input[name='zip']").val());
+                    var phones = $.trim($("input[name='phones']").val());
+                    var state = $.trim($("input[name='state']").val());
+
+                    if(!first_name){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+                    if(!address1){
+                        layer.msg('信息不能为空', {icon: 2});
+                        return false
+                    }
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/address/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'first_name': first_name,
+                            'address1': address1,
+                            'last_name': last_name,
+                            'city': city,
+                            'zip': zip,
+                            'phones': phones,
+                            'state': state,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#editAddressInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg(arg.msg, {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            $("#editOrderBtn").click(function () {
+                if($("input[name='order_time']").length == 0){
+                    var order_time_text = $("#order_time").text();
+                    var input = '<input type="text" name="order_time" style="width: 100%" class="form-class" value="'+ order_time_text +'">'
+                    $("#order_time").html(input);
+
+                    var order_task_type_text = $("#order_task_type").text();
+                    var input = '<input type="text" name="order_task_type" style="width: 100%" class="form-class" value="'+ order_task_type_text +'">'
+                    $("#order_task_type").html(input);
+
+                    var order_number_text = $("#order_number").text();
+                    var input = '<input type="text" name="order_number" style="width: 100%" class="form-class" value="'+ order_number_text +'">'
+                    $("#order_number").html(input);
+
+                    var order_finish_time_text = $("#order_finish_time").text();
+                    var input = '<input type="text" name="order_finish_time" style="width: 100%" class="form-class" value="'+ order_finish_time_text +'">'
+                    $("#order_finish_time").html(input);
+                }
+                $("#editOrderBtn").attr('has-edit', 1)
+
+            });
+
+            $("#editOrderBtnSave").click(function () {
+                $("#editOrderBtn").attr('has-edit', 0);
+                if($("input[name='order_number']").length != 0){
+                    var order_time = $.trim($("input[name='order_time']").val());
+                    var order_task_type = $.trim($("input[name='order_task_type']").val());
+                    var order_number = $.trim($("input[name='order_number']").val());
+                    var order_finish_time = $.trim($("input[name='order_finish_time']").val());
+
+                    if(!date_reg.test(order_time)){
+                        layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                        return false
+                    }
+
+                    if(!date_reg.test(order_finish_time)){
+                        layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                        return false
+                    }
+
+                    if(!order_number){
+                        layer.msg('订单号不能为空', {icon: 2});
+                        return false
+                    }
+                    var id = $("#editId").val();
+                    if(!id){
+                        layer.msg('此买家信息错误', {icon: 2});
+                        return false
+                    }
+
+                    csrftoken();
+                    $.ajax({
+                        url: '/backend/buyers/order/edit/',
+                        type: 'POST',
+                        data: {
+                            'id': id,
+                            'order_task_type': order_task_type,
+                            'order_time': order_time,
+                            'order_number': order_number,
+                            'order_finish_time': order_finish_time,
+                        },
+                        dataType: 'JSON',
+                        success: function (arg) {
+                            if(arg.status == 200){
+                                $('#editOrderInfo tr td').each(function () {
+                                    if($(this).find('input').length != 0){
+                                        var text = $(this).find('input').val();
+                                        $(this).html(text);
+                                    }
+                                });
+                                initTable();
+                                layer.msg('编辑成功', {icon: 1})
+
+                            }else {
+                                layer.msg(arg.msg, {icon: 2})
+                                initTable();
+                            }
+                        },
+                        error :function (arg) {
+                             //get the status code
+                            if (arg.status == 403) {
+                                layer.msg(arg.responseText, {icon: 2})
+                            } else {
+                                layer.msg('编辑失败', {icon: 2});
+                            }
+                            initTable();
+                        }
+                    })
+                }else{
+                    layer.msg("修改信息请先点击编辑", {icon: 2});
+                    return false
+                }
+
+            });
+
+            function initTable() {
+
+                $.ajax({
+                    url: '/backend/buyers/edit/' + {{ obj_id }},
+                    type: 'GET',
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if (arg.code == 0) {
+                            $("#editId").val(arg.id);
+                            $.each(arg.data, function (key, value) {
+                                //if (!value) {
+                                //    value = " "
+                                //}
+                                $("#" + key + "").html(value);
+                            })
+                        }
+                    },
+                    error :function (arg) {
+                         //get the status code
+                        if (arg.status == 403) {
+                            layer.msg(arg.responseText, {icon: 2})
+                        } else {
+                            layer.msg('数据获取失败', {icon: 2});
+                        }
+                    }
+                });
+            }
+
+            function isMobile() {
+                var userAgentInfo = navigator.userAgent;
+
+                var mobileAgents = [ "Android", "iPhone", "SymbianOS", "Windows Phone", "iPad","iPod"];
+
+                var mobile_flag = false;
+
+                //根据userAgent判断是否是手机
+                for (var v = 0; v < mobileAgents.length; v++) {
+                    if (userAgentInfo.indexOf(mobileAgents[v]) > 0) {
+                        mobile_flag = true;
+                        break;
+                    }
+                }
+                 var screen_width = window.screen.width;
+                 var screen_height = window.screen.height;
+
+                 //根据屏幕分辨率判断是否是手机
+                 if(screen_width < 500 && screen_height < 800){
+                     mobile_flag = true;
+                 }
+
+                 return mobile_flag;
+            }
+
+        });
+
+    </script>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'base/index.html' %}
+{% block title %}
+    <title>用户管理</title>
+    <style>
+        .form-search .layui-form-item .layui-form-label{
+            padding: 0;
+            line-height: 40px;
+            width: auto;
+            padding-right: 5px;
+        }
+        #editInfo .layui-form-item .layui-form-label{
+            width: auto;
+        }
+        #editInfo .layui-form-item .layui-input-block{
+            margin-left: 160px;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb" style="font-size: 18px">
+        <li><a href="">首页</a></li>
+        <li><a style="color: #666;" href="{% url 'buyer_list' %}">买家信息</a></li>
+    </ol>
+{% endblock %}
+
+{% block page-content %}
+    <!--搜索-->
+    <div class="layui-card" style="padding: 10px 13px;">
+        <div class="layui-row">
+            <form class="layui-form layui-col-md12 we-search form-search">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">平台</label>
+                        <div class="layui-input-inline">
+                            <select name="platform" id="platform">
+                                <option value="">---</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">站点</label>
+                        <div class="layui-input-inline">
+    {#                        <input type="text" name="site" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入站点">#}
+                            <select name="site" id="buyerSite">
+                                <option value="">---</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">买家状态</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="buyer_status" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入买家状态">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">累计CC权重</label>
+                        <div class="layui-input-inline">
+    {#                        <input type="text" name="cc" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入权重">#}
+                            <select name="cc">
+                                <option value="">---</option>
+                                <option value="50">50</option>
+                                <option value="25">25</option>
+                                <option value="10">0+</option>
+                                <option value="0">0</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">累计有效订单</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="order_vaild" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入累计有效订单">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">会员类别</label>
+                        <div class="layui-input-inline">
+    {#                        <input type="text" name="buyer_status" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入会员类别">#}
+                            <select name="member_type" id="memberType">
+                                <option value="">---</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">Review数量</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="review" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入Review数量">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">留评比</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="comment_percent" lay-verify="review_percent" autocomplete="off" class="layui-input" placeholder="请输入留评比">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">买家编号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="buyer_number" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入买家编号">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">注册手机</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="buyer_phone" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入注册手机">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">注册邮箱</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="buyer_email" lay-verify="" autocomplete="off" class="layui-input" placeholder="请输入注册邮箱">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">会员过期时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="member_expiry_time" id="member_expiry_time" lay-verify="" placeholder="-" autocomplete="off" class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">首单时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="order_first_time" id="order_first_time" lay-verify="" placeholder="-" autocomplete="off" class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">最后留评时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="comment_last_time" id="comment_last_time" lay-verify="" placeholder="-" autocomplete="off" class="layui-input" >
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" lay-submit lay-filter="sreachBtn">
+                            <i class="layui-icon layui-icon-search"></i>搜索
+                        </button>
+                        <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+                            <i class="layui-icon layui-icon-refresh"></i>清空
+                        </button>
+                        <button onclick="return false"  id="buyerImport" class="layui-btn layui-btn-primary layui-btn-sm">
+                            <i class="layui-icon layui-icon-upload-drag"></i>导入
+                        </button>
+                        <button onclick="return false"  id="buyerExport" class="layui-btn layui-btn-primary layui-btn-sm">
+                            <i class="layui-icon layui-icon-download-circle"></i>导出
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <table class="layui-hide" id="tbBuyers" lay-filter="line-tool"></table>
+
+        <script type="text/html" id="barTable">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</button>
+                <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button>
+            </div>
+        </script>
+    </div>
+
+    <!--修改用户信息-->
+    <form id="editInfo" style="display: none; margin: 25px 20px 0 0;" class="layui-form" lay-filter="editForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">买家编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="number" required  lay-verify="required" placeholder="请输入买家编号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">买家状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_status" required lay-verify="required" placeholder="请输入买家状态" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">会员类别</label>
+            <div class="layui-input-block">
+                <input type="text" name="member_type" required lay-verify="required" placeholder="请输入会员类别" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">会员过期时间</label>
+            <div class="layui-input-block">
+                <input type="text" id="m_expiry_time" name="member_expiry_time" required lay-verify="required" placeholder="请输入会员过期时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">注册手机</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_phone" required lay-verify="required" placeholder="请输入注册手机" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">注册邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_email" required lay-verify="required" placeholder="请输入注册邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">12月累计信用卡金额</label>
+            <div class="layui-input-block">
+                <input disabled type="text" name="one_year_price" required placeholder="请输入12月累计信用卡金额" class="layui-input layui-disabled">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">累计有效订单金额</label>
+            <div class="layui-input-block">
+                <input disabled type="text" name="order_vaild_price" required placeholder="请输入累计有效订单金额" class="layui-input layui-disabled">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">Review数量</label>
+            <div class="layui-input-block">
+                <input disabled type="text" name="review_count" required placeholder="请输入Review数量" class="layui-input layui-disabled">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">留评比</label>
+            <div class="layui-input-block">
+                <input disabled type="text" name="review_percent" required placeholder="请输入留评比" class="layui-input layui-disabled">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">首单时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="o_first_time" id="o_first_time" lay-verify="" placeholder="-" class="layui-input ">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">最后评价时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="c_last_time" id="c_last_time" lay-verify="" placeholder="-" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editSave">
+                    编辑
+                </button>
+                <button onclick="return false" id="cancelEdit" class="layui-btn layui-btn-primary">
+                    取消
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div id="excelHandler"></div>
+{% endblock %}
+
+{% block extra-bottom-js %}
+    <script src="/static/js/buyers_list.js"></script>
+{% endblock %}

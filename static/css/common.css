@@ -1,0 +1,11 @@
+.btn-margin{
+    margin-right: 5px;
+    border-radius: 10px !important;
+}
+.page-content-top .f-left{
+    float: left;
+}
+nav .pagination .active{
+    color:white;
+    background-color:#337AB7;
+}

@@ -1,0 +1,1255 @@
+{% extends 'base/index.html' %}
+{% block title %}
+    <title>用户管理</title>
+    <style>
+
+        .layui-form-item .layui-form-label{
+            padding: 0 5px 0 35px;
+            line-height: 40px;
+            width: auto;
+        }
+
+        .detail{
+            margin-bottom: 10px;
+        }
+
+        #editBuyer .layui-input-block,#editFamily .layui-input-block, #editCard .layui-input-block
+        ,#editMember .layui-input-block,#editAddress .layui-input-block,#editOrder .layui-input-block{
+            padding-left: 50px;
+        }
+
+        table tr th{
+            background-color: #f2f2f2;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb" style="font-size: 18px">
+        <li><a href="">首页</a></li>
+        <li><a href="{% url 'buyer_list' %}">买家信息</a></li>
+        <li><a style="color: royalblue;" href="javascript:;">买员详情</a></li>
+    </ol>
+{% endblock %}
+
+{% block page-content %}
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>设备信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+            <button id="reloadBtn" type="button" class="btn btn-default btn-detail">刷新</button>
+        </div>
+        <table class="table table-bordered" id="tbDeviceInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">买家编号</th>
+                    <th style="width: 25%;">IP</th>
+                    <th style="width: 25%;">IP买家名</th>
+                    <th style="width: 25%;">IP密码</th>
+                </tr>
+                <tr>
+                    <td id="number"></td>
+                    <td id="ip"></td>
+                    <td id="ip_name"></td>
+                    <td id="ip_password"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>买家信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+            <button id="reloadBtn" type="button" class="btn btn-default btn-detail">刷新</button>
+        </div>
+
+        <table class="table table-bordered" id="tbBuyerInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+                    <th style="width: 25%;">平台</th>
+                    <th style="width: 25%;">站点</th>
+                    <th style="width: 25%;">买家姓名</th>
+                    <th style="width: 25%;">UA</th>
+                </tr>
+                <tr>
+                    <td id="platform"></td>
+                    <td id="buyer_site"></td>
+                    <td id="buyer_name"></td>
+                    <td id="buyer_ua"></td>
+                </tr>
+                <tr>
+                    <th style="width: 25%;">买家状态</th>
+                    <th style="width: 25%;">累计购买金额</th>
+                    <th style="width: 25%;">12月累计CC金额</th>
+                    <th style="width: 25%;">Cookie</th>
+                </tr>
+                <tr>
+                    <td id="buyer_status"></td>
+                    <td id="#"></td>
+                    <td id="#"></td>
+                    <td id="buyer_cookie"></td>
+                </tr>
+                <tr>
+                    <th style="width: 25%;">注册手机</th>
+                    <th style="width: 25%;">注册邮箱</th>
+                    <th style="width: 25%;">买家登录密码</th>
+                    <th style="width: 25%;">邮箱密码</th>
+                </tr>
+                <tr>
+                    <td id="buyer_phone"></td>
+                    <td id="buyer_email"></td>
+                    <td id="buyer_email_password"></td>
+                    <td id="buyer_login_password"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title pull-left" style="margin: 0;font-size: 20px;">
+            <span>家庭信息</span>
+        </fieldset>
+        <div class="btn-group pull-right" role="group" >
+            <button id="editBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+            <button id="editBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+            <button id="reloadBtn" type="button" class="btn btn-default btn-detail">刷新</button>
+        </div>
+        <table class="table table-bordered" id="tbDeviceInfo" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+            <tbody>
+                <tr>
+
+                    <th style="width: 33%;">配偶姓名</th>
+                    <th style="width: 33%;">配偶邮箱</th>
+                    <th style="width: 33%;">配偶邮箱密码</th>
+                </tr>
+                <tr>
+                    <td id="partner_name"></td>
+                    <td id="partner_email"></td>
+                    <td id="partner_email_password"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>家庭信息</span>
+        </fieldset>
+        <table class="layui-hide" id="tbFamilyInfo" lay-filter="fm-line-tool"></table>
+
+        <script type="text/html" id="barTable">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</button>
+        </div>
+    </script>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>社交信息</span>
+        </fieldset>
+        <table class="layui-hide" id="tbInternetInfo" lay-filter="in-line-tool"></table>
+
+        <script type="text/html" id="barTable">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</button>
+        </div>
+    </script>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>信用卡信息</span>
+        </fieldset>
+        <table class="layui-hide" id="tbCardInfo" lay-filter="cr-line-tool"></table>
+
+        <script type="text/html" id="barTable">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</button>
+        </div>
+    </script>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>会员状态</span>
+        </fieldset>
+        <table class="layui-hide" id="tbMemberInfo" lay-filter="su-line-tool"></table>
+
+        <script type="text/html" id="barTable">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</button>
+        </div>
+    </script>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>默认收货地址</span>
+        </fieldset>
+        <table class="layui-hide" id="tbAddressInfo" lay-filter="ad-line-tool"></table>
+
+        <script type="text/html" id="barTable">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</button>
+        </div>
+    </script>
+    </div>
+
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>订单任务列表</span>
+        </fieldset>
+        <table class="layui-hide" id="tbOrderInfo" lay-filter="or-line-tool"></table>
+
+        <script type="text/html" id="barTable">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</button>
+            </div>
+        </script>
+    </div>
+
+    <a href="{{ last_order.id }}"><strong>最近任务列表</strong></a>
+
+    <!--编辑表单-->
+    <form id="editDevice" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editDeviceRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">买家编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="number" required lay-verify="required" placeholder="买家编号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">IP</label>
+            <div class="layui-input-block">
+                <input type="text" name="ip" required lay-verify="required" placeholder="IP" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">IP买家名</label>
+            <div class="layui-input-block">
+                <input type="text" name="ip_name" required lay-verify="required" placeholder="IP买家名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">IP密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="ip_password" required lay-verify="required" placeholder="IP密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editDeviceSave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editBuyer" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editBuyerRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">平台</label>
+            <div class="layui-input-block">
+                <input type="text" name="platform" required lay-verify="required" placeholder="平台" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">站点</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_site" required lay-verify="required" placeholder="站点" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">买家姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_name" required lay-verify="required" placeholder="买家姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">UA</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_ua" required lay-verify="required" placeholder="UA" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">买家状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_status" required lay-verify="required" placeholder="买家状态" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">累计购买金额</label>
+            <div class="layui-input-block">
+                <input type="text" name="#" required lay-verify="required" placeholder="累计购买金额" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">12月累计CC金额</label>
+            <div class="layui-input-block">
+                <input type="text" name="#" required lay-verify="required" placeholder="12月累计CC金额" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">Cookie</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_cookie" required lay-verify="required" placeholder="Cookie" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">注册手机</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_phone" required lay-verify="required" placeholder="注册手机" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">注册邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_email" required lay-verify="required" placeholder="注册邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">邮箱密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_email_password" required lay-verify="required" placeholder="邮箱密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">买家登录密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="buyer_login_password" required lay-verify="required" placeholder="买家登录密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editBuyerSave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editFamily" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editFamilyRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">配偶姓名</label>
+            <div class="layui-input-block">
+                <input type="text" name="partner_name" required lay-verify="required" placeholder="配偶姓名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">配偶邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="partner_email" required lay-verify="required" placeholder="配偶邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">配偶邮箱密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="partner_email_password" required lay-verify="required" placeholder="配偶邮箱密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editFamilySave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editInternet" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editInternetRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">Facebook</label>
+            <div class="layui-input-block">
+                <input type="text" name="facebook" required lay-verify="required" placeholder="Facebook" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">Gmail</label>
+            <div class="layui-input-block">
+                <input type="text" name="gmail" required lay-verify="required" placeholder="Gmail" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">Twitter</label>
+            <div class="layui-input-block">
+                <input type="text" name="twitter" required lay-verify="required" placeholder="Twitter" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">Youtube</label>
+            <div class="layui-input-block">
+                <input type="text" name="youtube" required lay-verify="required" placeholder="Youtube" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editInternetSave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editCard" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editCardRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">信用卡卡号</label>
+            <div class="layui-input-block">
+                <input type="text" name="credit_card" required lay-verify="required" placeholder="信用卡卡号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">信用卡过期时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="credit_card_expiry" required lay-verify="required" placeholder="信用卡过期时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">信用卡_CVV</label>
+            <div class="layui-input-block">
+                <input type="text" name="credit_card_cvv" required lay-verify="required" placeholder="信用卡_CVV" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">信用卡来源</label>
+            <div class="layui-input-block">
+                <input type="text" name="credit_card_origin" required lay-verify="required" placeholder="信用卡来源" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editCardSave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editMember" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editMemberRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">会员状态</label>
+            <div class="layui-input-block">
+                <input type="text" name="member_status" required lay-verify="required" placeholder="会员状态" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">申请时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="member_apply_time" required lay-verify="required" placeholder="申请时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">过期时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="member_expiry_time" required lay-verify="required" placeholder="过期时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editMemberSave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editAddress" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editAddressRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">First Name</label>
+            <div class="layui-input-block">
+                <input type="text" name="first_name" required lay-verify="required" placeholder="First Name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">Last Name</label>
+            <div class="layui-input-block">
+                <input type="text" name="last_name" required lay-verify="required" placeholder="Last Name" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">Address1</label>
+            <div class="layui-input-block">
+                <input type="text" name="address1" required lay-verify="required" placeholder="Address1" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">City</label>
+            <div class="layui-input-block">
+                <input type="text" name="city" required lay-verify="required" placeholder="City" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">State</label>
+            <div class="layui-input-block">
+                <input type="text" name="state" required lay-verify="required" placeholder="State" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">Zip</label>
+            <div class="layui-input-block">
+                <input type="text" name="zip" required lay-verify="required" placeholder="Zip" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">phones</label>
+            <div class="layui-input-block">
+                <input type="text" name="phones" required lay-verify="required" placeholder="phones" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editAddressSave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editOrder" style="display: none; margin: 25px 30px 30px 0;" class="layui-form" lay-filter="editOrderRender">
+        <div class="layui-form-item">
+            <label class="layui-form-label">任务时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="create_time" required lay-verify="required" placeholder="任务时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">任务类型</label>
+            <div class="layui-input-block">
+                <input type="text" name="task_type" required lay-verify="required" placeholder="任务类型" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">订单号</label>
+            <div class="layui-input-block">
+                <input disabled type="text" name="order_number" required lay-verify="required" placeholder="订单号" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label">完成时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="finish_time" required lay-verify="required" placeholder="完成时间" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label my-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editOrderSave">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block extra-bottom-js %}
+    <script>
+
+        // csrf
+        function csrftoken() {
+            /*********** csrftoken开始****************/
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            /*********** csrftoken结束****************/
+        }
+
+        // layui
+        layui.use(['element', 'table', 'form', 'jquery', 'laydate'], function() {
+            var element = layui.element,
+            table = layui.table,
+            $ = layui.jquery,
+            myForm = layui.form;
+            laydate = layui.laydate;
+
+            //日期范围
+            laydate.render({
+                elem: '#member_expiry_time'
+                ,range: true
+            });
+            laydate.render({
+                elem: '#order_first_time'
+                ,range: true
+            });
+            laydate.render({
+                elem: '#comment_last_time'
+                ,format: 'MM月dd日yyyy年'
+            });
+            laydate.render({
+                elem: '#o_first_time'
+                ,range: true
+            });
+            laydate.render({
+                elem: '#c_last_time'
+                ,format: 'MM月dd日yyyy年'
+            });
+
+            $.ajax({
+                url: '/backend/buyers/edit/' + {{ obj_id }},
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (arg) {
+                    if(arg.code == 0){
+                        $.each(arg.data, function (key, value) {
+                            if(!value){
+                                value = "无"
+                            }
+                            $("#" + key + "").html(value);
+                        })
+                    }
+                },
+                error: function (arg) {
+                    layer.msg("编辑失败", {icon: 2})
+                }
+            });
+            {#var tableObj1 = table.render({#}
+            {#    elem: '#tbDeviceInfo'#}
+            {#    ,url: '/backend/buyers/device/edit/?id=' + {{ obj_id }}#}
+            {#    ,defaultToolbar: []#}
+            {#    ,cellMinWidth: 80#}
+            {#    ,page: false#}
+            {#    ,cols: [[#}
+            {#        {field:'number', title: '买家编号', width: 150}#}
+            {#        ,{field:'ip', title: 'IP', width: 200}#}
+            {#        ,{field:'ip_name', title: 'IP买家名'}#}
+            {#        ,{field:'ip_password', title: 'IP密码'}#}
+            {#        ,{align:'center', toolbar: '#barTable', width: 150}#}
+            {#    ]]#}
+            {#  });#}
+            {##}
+            {#//监听行工具事件#}
+            {#table.on('tool(dev-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"#}
+            {#    var data = obj.data //获得当前行数据#}
+            {#    ,layEvent = obj.event; //获得 lay-event 对应的值#}
+            {##}
+            {#    if(layEvent === 'edit'){#}
+            {#        layer.open({#}
+            {#            type    : 1,#}
+            {#            title   : '编辑设备信息',#}
+            {#            area    : ['500px'],#}
+            {#            fixed   : false, //不固定#}
+            {#            maxmin  : true,#}
+            {#            offset  : '150px',#}
+            {#            content : $("#editDevice"),#}
+            {#            // btn     : ['确认', '取消'],#}
+            {#            success : function(index, layero) {             // 成功弹出后回调#}
+            {#                $("#editDevice").attr('form-id', {{ obj_id }});#}
+            {#                 myForm.val('editDeviceRender', {#}
+            {#                    number: data.number,#}
+            {#                    ip: data.ip,#}
+            {#                    ip_name: data.ip_name,#}
+            {#                    ip_password: data.ip_password,#}
+            {#                 });#}
+            {#            },#}
+            {#            cancel  : function(index, layero){#}
+            {#                layer.close(index);#}
+            {#                //return false 开启该代码可禁止点击该按钮关闭#}
+            {#            }#}
+            {#        })#}
+            {#    }#}
+            //{#});
+
+
+            {#var tableObj2 = table.render({#}
+            {#    elem: '#tbBuyerInfo'#}
+            {#    ,url: '/backend/buyers/buyer/edit/?id=' + {{ obj_id }}#}
+            {#    ,defaultToolbar: []#}
+            {#    ,cellMinWidth: 100#}
+            {#    ,page: false#}
+            {#    ,cols: [[#}
+            {#        {field:'platform', title: '平台'}#}
+            {#        ,{field:'buyer_site', title: '站点'}#}
+            {#        ,{field:'buyer_name', title: '买家姓名'}#}
+            {#        ,{field:'buyer_ua', title: 'UA'}#}
+            {#        ,{field:'buyer_status', title: '买家状态'}#}
+            {#        ,{field:'#', title: '累计购买金额', width: 120}#}
+            {#        ,{field:'#', title: '12月累计CC金额', width: 150}#}
+            {#        ,{field:'buyer_cookie', title: 'Cookie'}#}
+            {#        ,{field:'buyer_phone', title: '注册手机'}#}
+            {#        ,{field:'buyer_email', title: '注册邮箱'}#}
+            {#        ,{field:'buyer_email_password', title: '邮箱密码'}#}
+            {#        ,{field:'buyer_login_password', title: '买家登录密码', width: 120}#}
+            {#        ,{align:'center', toolbar: '#barTable', width: 150}#}
+            {#    ]]#}
+            {##}
+            //{#});
+
+            //监听行工具事件
+            /*table.on('tool(buyer-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑买家信息',
+                        area    : ['500px'],
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        offset  : '150px',
+                        content : $("#editBuyer"),
+                        // btn     : ['确认', '取消'],
+                        success : function(index, layero) {             // 成功弹出后回调
+                            $("#editBuyer").attr('form-id', {{ obj_id }});
+                             myForm.val('editBuyerRender', {
+                                platform: data.platform,
+                                buyer_site: data.buyer_site,
+                                buyer_name: data.buyer_name,
+                                buyer_ua: data.buyer_ua,
+                                buyer_status: data.buyer_status,
+                                buyer_cookie: data.buyer_cookie,
+                                buyer_phone: data.buyer_phone,
+                                buyer_email: data.buyer_email,
+                                buyer_email_password: data.buyer_email_password,
+                                buyer_login_password: data.buyer_login_password,
+                             });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }
+            });
+
+            var tableObj3 = table.render({
+                elem: '#tbFamilyInfo'
+                ,url: '/backend/buyers/family/edit/?id=' + {{ obj_id }}
+                ,defaultToolbar: []
+                ,cellMinWidth: 100
+                ,page: false
+                ,cols: [[
+                    {field:'partner_name', title: '配偶姓名', width: 200}
+                    ,{field:'partner_email', title: '配偶邮箱'}
+                    ,{field:'partner_email_password', title: '配偶邮箱密码'}
+                    ,{align:'center', toolbar: '#barTable', width: 150}
+                ]]
+            });
+
+            //监听行工具事件
+            table.on('tool(fm-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑家庭信息',
+                        area    : ['500px'],
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        offset  : '150px',
+                        content : $("#editFamily"),
+                        // btn     : ['确认', '取消'],
+                        success : function(index, layero) {             // 成功弹出后回调
+                            $("#editFamily").attr('form-id', {{ obj_id }});
+                             myForm.val('editFamilyRender', {
+                                partner_name: data.partner_name,
+                                partner_email: data.partner_email,
+                                partner_email_password: data.partner_email_password,
+
+                             });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }
+            });
+
+            var tableObj4 = table.render({
+                elem: '#tbInternetInfo'
+                ,url: '/backend/buyers/internet/edit/?id=' + {{ obj_id }}
+                ,defaultToolbar: []
+                ,cellMinWidth: 100
+                ,page: false
+                ,cols: [[
+                    {field:'facebook', title: 'Facebook', width: 200}
+                    ,{field:'gmail', title: 'Gmail'}
+                    ,{field:'twitter', title: 'Twitter'}
+                    ,{field:'youtube', title: 'Youtube'}
+                    ,{align:'center', toolbar: '#barTable', width: 150}
+                ]]
+
+            });
+
+            //监听行工具事件
+            table.on('tool(in-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑社交信息',
+                        area    : ['500px'],
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        offset  : '150px',
+                        content : $("#editInternet"),
+                        // btn     : ['确认', '取消'],
+                        success : function(index, layero) {             // 成功弹出后回调
+                            $("#editInternet").attr('form-id', {{ obj_id }});
+                             myForm.val('editInternetRender', {
+                                facebook: data.facebook,
+                                gmail: data.gmail,
+                                twitter: data.twitter,
+                                youtube: data.youtube,
+                             });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }
+            });
+
+            var tableObj5 = table.render({
+                elem: '#tbCardInfo',
+                url: '/backend/buyers/card/edit/?id=' + {{ obj_id }}
+                ,page: false
+                ,defaultToolbar: []
+                ,cellMinWidth: 100
+                ,cols: [[
+                    {field:'credit_card', title: '信用卡卡号', width: 200}
+                    ,{field:'credit_card_expiry', title: '信用卡过期时间'}
+                    ,{field:'credit_card_cvv', title: '信用卡_CVV'}
+                    ,{field:'credit_card_origin', title: '信用卡来源'}
+                    ,{align:'center', toolbar: '#barTable', width: 150}
+                ]]
+
+            });
+
+            //监听行工具事件
+            table.on('tool(cr-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑信用卡信息',
+                        area    : ['500px'],
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        offset  : '150px',
+                        content : $("#editCard"),
+                        // btn     : ['确认', '取消'],
+                        success : function(index, layero) {             // 成功弹出后回调
+                            $("#editCard").attr('form-id', {{ obj_id }});
+                             myForm.val('editCardRender', {
+                                credit_card: data.credit_card,
+                                credit_card_expiry: data.credit_card_expiry,
+                                credit_card_cvv: data.credit_card_cvv,
+                                credit_card_origin: data.credit_card_origin,
+                             });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }
+            });
+
+            var tableObj6 = table.render({
+                elem: '#tbMemberInfo'
+                ,url: '/backend/buyers/member/edit/?id=' + {{ obj_id }}
+                ,page: false
+                ,defaultToolbar: []
+                ,cellMinWidth: 100
+                ,cols: [[
+                    {field:'member_status', title: '会员状态', width: 200}
+                    ,{field:'member_apply_time', title: '申请时间'}
+                    ,{field:'member_expiry_time', title: '过期时间'}
+                    ,{align:'center', toolbar: '#barTable', width: 150}
+                ]]
+            });
+
+            //监听行工具事件
+            table.on('tool(su-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑会员状态',
+                        area    : ['500px'],
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        {#offset  : '150px',#}
+                        content : $("#editMember"),
+                        // btn     : ['确认', '取消'],
+                        success : function(index, layero) {             // 成功弹出后回调
+                            $("#editMember").attr('form-id', {{ obj_id }});
+                             myForm.val('editMemberRender', {
+                                member_status: data.member_status,
+                                member_apply_time: data.member_apply_time,
+                                member_expiry_time: data.member_expiry_time,
+                             });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }
+            });
+
+            var tableObj7 = table.render({
+                elem: '#tbAddressInfo'
+                ,url: '/backend/buyers/address/edit/?id=' + {{ obj_id }}
+                ,page: false
+                ,defaultToolbar: []
+                ,cellMinWidth: 100
+                ,cols: [[
+                    {field:'first_name', title: 'First Name', width: 200}
+                    ,{field:'last_name', title: 'Last Name'}
+                    ,{field:'address1', title: 'Address1'}
+                    ,{field:'city', title: 'City'}
+                    ,{field:'state', title: 'State'}
+                    ,{field:'zip', title: 'Zip'}
+                    ,{field:'phones', title: 'phones'}
+                    ,{align:'center', toolbar: '#barTable', width: 150}
+                ]]
+
+            });
+
+            //监听行工具事件
+            table.on('tool(ad-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑收货地址',
+                        area    : ['500px'],
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        {#offset  : '150px',#}
+                        content : $("#editAddress"),
+                        // btn     : ['确认', '取消'],
+                        success : function(index, layero) {             // 成功弹出后回调
+                            $("#editAddress").attr('form-id', {{ obj_id }});
+                             myForm.val('editAddressRender', {
+                                first_name: data.first_name,
+                                last_name: data.last_name,
+                                address1: data.address1,
+                                city: data.city,
+                                state: data.state,
+                                zip: data.zip,
+                                phones: data.phones,
+                             });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }
+            });
+
+            var tableObj8 = table.render({
+                elem: '#tbOrderInfo'
+                ,url: '/backend/buyers/order/edit/?id=' + {{ obj_id }}
+                ,page: false
+                ,defaultToolbar: []
+                ,cellMinWidth: 100
+                ,cols: [[
+                    {field:'create_time', title: '任务时间', width: 200}
+                    ,{field:'task_type', title: '任务类型'}
+                    ,{field:'order_number', title: '订单号'}
+                    ,{field:'finish_time', title: '完成时间'}
+                    ,{align:'center', toolbar: '#barTable', width: 150}
+                ]]
+
+
+            });
+
+            //监听行工具事件
+            table.on('tool(or-line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑订单任务',
+                        area    : ['500px'],
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        offset  : '150px',
+                        content : $("#editOrder"),
+                        // btn     : ['确认', '取消'],
+                        success : function(index, layero) {             // 成功弹出后回调
+                            $("#editOrder").attr('form-id', {{ obj_id }});
+                             myForm.val('editOrderRender', {
+                                create_time: data.create_time,
+                                task_type: data.task_type,
+                                order_number: data.order_number,
+                                finish_time: data.finish_time,
+                             });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }
+            });
+
+
+            // 提交编辑
+            myForm.on('submit(editDeviceSave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/device/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editDevice").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj1.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });
+
+            // 提交编辑
+            myForm.on('submit(editBuyerSave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/buyer/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editBuyer").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj2.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });
+
+            // 提交编辑
+            myForm.on('submit(editFamilySave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/family/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editFamily").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj3.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });
+
+            // 提交编辑
+            myForm.on('submit(editInternetSave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/internet/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editInternet").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj4.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });
+
+            // 提交编辑
+            myForm.on('submit(editCardSave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/card/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editCard").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj5.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });
+
+            // 提交编辑
+            myForm.on('submit(editMemberSave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/member/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editMember").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj6.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });
+
+            // 提交编辑
+            myForm.on('submit(editAddressSave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/address/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editAddress").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj7.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });
+
+            // 提交编辑
+            myForm.on('submit(editOrderSave)', function(data){
+                /*layer.alert(JSON.stringify(data.field), {
+                    title: '最终的提交信息'
+                });*/
+                /*csrftoken();
+                $.ajax({
+                    url: '/backend/buyers/order/edit/',
+                    type: 'POST',
+                    data: {
+                        'id':  $("#editOrder").attr('form-id'),
+                        'data': JSON.stringify(data.field)
+                    },
+                    dataType: 'JSON',
+                    success: function (arg) {
+                        if(arg.status == 200){
+                            layer.msg(arg.msg, {icon: 1});
+                            tableObj8.reload();
+                        }
+                    },
+                    error: function (arg) {
+                        layer.msg('编辑失败', {icon: 1});
+                    }
+                });
+                return false;
+            });*/
+        });
+
+    </script>
+{% endblock %}

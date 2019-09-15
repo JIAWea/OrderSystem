@@ -1,0 +1,497 @@
+{% extends 'base/index.html' %}
+{% block title %}
+    <link rel="stylesheet" href="/static/layui/lay/modules/authtree/tree_themes/auth-skin-default.css">
+    <title>用户管理</title>
+    <style>
+        form .layui-form-item .layui-form-label{
+            padding: 0;
+            line-height: 40px;
+            width: auto;
+            padding-right: 5px;
+            padding-left: 38px;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb" style="font-size: 18px">
+        <li><a href="">首页</a></li>
+        <li><a style="color: #666;" href="{% url 'admin_list' %}">权限管理</a></li>
+    </ol>
+{% endblock %}
+
+{% block page-content %}
+    <!--搜索-->
+
+
+    <div class="layui-card" style="padding: 10px 10px;">
+        <div class="layui-row" style="padding: 10px;">
+            <button id="addBtn" class="layui-btn layui-btn-normal layui-btn-sm">
+                <i class="layui-icon layui-icon-add-1"></i>添加角色
+            </button>
+            <button id="deleteBtn" class="layui-btn layui-btn-danger layui-btn-sm">
+                <i class="layui-icon layui-icon-delete"></i>删除
+            </button>
+        </div>
+
+        <table class="layui-hide" id="tbRole" lay-filter="line-tool"></table>
+
+        <script type="text/html" id="barTable">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</button>
+                <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button>
+            </div>
+        </script>
+    </div>
+
+
+
+    <!--添加角色-->
+    <form id="addRole" style="display: none; margin: 25px 20px 0 0;" class="layui-form" lay-filter="addForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" required  lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限分配</label>
+            <div class="layui-input-block">
+                <div id="LAY-auth-tree-index"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="addSave">
+                    编辑
+                </button>
+                <button onclick="return false" id="cancelAdd" class="layui-btn layui-btn-primary">
+                    取消
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editRole" style="display: none; margin: 25px 20px 0 0;" class="layui-form" lay-filter="editForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" required  lay-verify="required" placeholder="请输入名称" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限分配</label>
+            <div class="layui-input-block">
+                <div id="LAY-auth-tree-index2"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editSave">
+                    编辑
+                </button>
+                <button onclick="return false" id="cancelEdit" class="layui-btn layui-btn-primary">
+                    取消
+                </button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block extra-bottom-js %}
+    <script>
+
+        // csrf
+        function csrftoken() {
+            /*********** csrftoken开始****************/
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            /*********** csrftoken结束****************/
+        }
+        layui.config({
+            base: '/static/layui/lay/modules/authtree/'
+        }).extend({
+            authtree: 'authtree'
+        });
+
+        layui.use(['element', 'table', 'form', 'jquery', 'laydate', 'authtree'], function() {
+            var element = layui.element,
+            table = layui.table,
+            $ = layui.jquery,
+            myForm = layui.form,
+            laydate = layui.laydate,
+            authtree = layui.authtree;
+
+            var mobile_flag = isMobile();
+
+            //日期范围
+
+            var tableObj = table.render({
+                elem: '#tbRole'
+                ,url: '/backend/role/view/'
+                ,cellMinWidth: 80
+                ,page: true                                    //开启分页
+                ,limit: 20
+                ,limits: [10,20,30]
+                ,defaultToolbar: []
+                ,cols: [[
+                    {type: 'checkbox', width: 50}
+                    ,{field:'index', title: '序号', type: 'numbers', width: 80}
+                    ,{field:'name', title: '角色名称', width: 250}
+                    ,{field:'create_time', title: '创建时间'}
+                    ,{align:'center', toolbar: '#barTable', width: 150}
+                ]]
+            });
+
+            //监听行工具事件
+            table.on('tool(line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+
+                if(layEvent === 'edit'){
+                    var area = null;
+                    if(mobile_flag){
+                        area = ['100%', '100%']
+                    }else {
+                        area = ['40%', '450px']
+                    }
+
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑角色',
+                        area    : area,
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        content : $("#editRole"),
+                        success : function(){
+                            $("#editRole").attr('edit-id', data.id);
+
+                            // 渲染表单
+                            myForm.val('editForm', {
+                                name: data.name,
+                            });
+                            myForm.render();
+
+                            $.ajax({
+                                url: '/backend/role/edit/' + data.id,
+                                type: 'GET',
+                                dataType: 'JSON',
+                                success: function (arg) {
+                                    if(arg.code == 0){
+                                        // 如果后台返回的不是树结构，请使用 authtree.listConvert 转换
+                                        // var trees = arg.data.trees;
+                                        var trees = authtree.listConvert(arg.data.list, {
+                                            primaryKey: 'id'
+                                            ,startPid: 0
+                                            ,parentKey: 'pid'
+                                            ,nameKey: 'name'
+                                            ,valueKey: 'id'
+                                            ,checkedKey: arg.data.checkedId
+                                        });
+                                        authtree.render('#LAY-auth-tree-index2', trees, {
+                                            inputname: 'authids[]',
+                                            layfilter: 'lay-check-auth',
+                                            autowidth: true,
+                                        });
+                                    }else {
+                                        layer.msg('获取角色失败', {icon: 2})
+                                    }
+                                },
+                                error :function (arg) {
+                                     //get the status code
+                                    if (arg.status == 403) {
+                                        layer.msg(arg.responseText, {icon: 2})
+                                    } else {
+                                        layer.msg('获取角色失败', {icon: 2});
+                                    }
+                                }
+                            });
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            document.getElementById("addRole").reset();         // 清空编辑表单的值
+
+                            authtree.uncheckAll('#LAY-auth-tree-index2');       // 取消选中权限
+
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    })
+                }else if(layEvent === 'del'){
+                    layer.confirm('是否要删除，删除后不可恢复', {title: '确认删除',icon: 2}, function(index){
+                        csrftoken();
+                        $.ajax({
+                           url:'/backend/role/delete/' + data.id,
+                           dataType:'JSON',
+                           type:'POST',
+                           success:function (arg) {
+                               if(arg.status){
+                                    layer.msg('删除成功', {icon: 1});
+                                    tableObj.reload()
+                                }else {
+                                    layer.msg(arg.msg, {icon: 2});
+                                    tableObj.reload()
+                                }
+                           },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('删除失败', {icon: 2});
+                                }
+                            }
+                        })
+                    });
+                }
+            });
+
+
+            $("#addBtn").click(function () {
+                var area = null;
+                if(mobile_flag){
+                    area = ['100%', '100%']
+                }else {
+                    area = ['40%', '500px']
+                }
+
+                layer.open({
+                    type    : 1,
+                    title   : '添加角色',
+                    area    : area,
+                    fixed   : false, //不固定
+                    maxmin  : true,
+                    content : $("#addRole"),
+                    success : function(){
+                        $.ajax({
+                            url: '/backend/role/add/',
+                            type: 'GET',
+                            dataType: 'JSON',
+                            success: function (arg) {
+                                if(arg.code == 0){
+                                    // 如果后台返回的不是树结构，请使用 authtree.listConvert 转换
+                                    // var trees = arg.data.trees;
+                                    var trees = authtree.listConvert(arg.data.list, {
+                                        primaryKey: 'id'
+                                        ,startPid: 0
+                                        ,parentKey: 'pid'
+                                        ,nameKey: 'name'
+                                        ,valueKey: 'id'
+                                        ,checkedKey: arg.data.checkedId
+                                    });
+                                    authtree.render('#LAY-auth-tree-index', trees, {
+                                        inputname: 'authids[]',
+                                        layfilter: 'lay-check-auth',
+                                        autowidth: true,
+                                    });
+                                }else {
+                                    layer.msg('获取角色失败', {icon: 2})
+                                }
+                            },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('获取角色失败', {icon: 2});
+                                }
+                            }
+                        });
+                    },
+                    cancel  : function(index, layero){
+                        layer.close(index);
+                        // 清空编辑表单的值
+                        document.getElementById("addRole").reset();
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                })
+            });
+
+            $("#cancelAdd").click(function () {
+                layer.closeAll();
+                // 清空编辑表单的值
+                document.getElementById("addRole").reset();
+            });
+
+            $("#cancelEdit").click(function () {
+                layer.closeAll();
+                // 清空编辑表单的值
+                document.getElementById("editRole").reset();
+                authtree.uncheckAll('#LAY-auth-tree-index2');       // 取消选中权限
+            });
+
+            // 监听提交,添加角色
+            myForm.on('submit(addSave)', function(data){
+                var checked = authtree.getChecked('#LAY-auth-tree-index');
+                if(checked.length == 0){
+                    layer.msg("请分配权限", {icon: 2})
+                }
+                csrftoken();
+                $.ajax({
+                    url: '/backend/role/add/',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        'pers': JSON.stringify(checked),
+                        'data' : JSON.stringify(data.field)
+                    },
+                    success:function (arg) {
+                        if(arg.status == 200){
+                            layer.closeAll();
+                            layer.msg('添加成功', {icon:1});
+                            tableObj.reload();
+                        }else {
+                            layer.msg(arg.msg, {icon: 2})
+                        }
+                    },
+                    error :function (arg) {
+                         //get the status code
+                        if (arg.status == 403) {
+                            layer.msg(arg.responseText, {icon: 2})
+                        } else {
+                            layer.msg('添加失败', {icon: 2});
+                        }
+                    }
+                });
+
+                document.getElementById("addRole").reset();
+                authtree.uncheckAll('#LAY-auth-tree-index');       // 取消选中权限
+                return false;
+            });
+
+            // 监听提交,编辑角色
+            myForm.on('submit(editSave)', function(data){
+                var checked = authtree.getChecked('#LAY-auth-tree-index2');
+                var id = $("#editRole").attr('edit-id');
+                if(!id){
+                    layer.msg("找不到该角色", {icon: 2})
+                }
+                if(checked.length == 0){
+                    layer.msg("请分配权限", {icon: 2})
+                }
+                csrftoken();
+                $.ajax({
+                    url: '/backend/role/edit/' + id,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        'pers': JSON.stringify(checked),
+                        'data' : JSON.stringify(data.field)
+                    },
+                    success:function (arg) {
+                        if(arg.status == 200){
+                            layer.closeAll();
+                            layer.msg('编辑成功', {icon:1});
+                        }else {
+                            layer.msg(arg.msg, {icon: 2})
+                        }
+                    },
+                    error :function (arg) {
+                         //get the status code
+                        if (arg.status == 403) {
+                            layer.msg(arg.responseText, {icon: 2})
+                        } else {
+                            layer.msg('编辑失败', {icon: 2});
+                        }
+                    }
+                });
+                return false;
+            });
+
+            $("#deleteBtn").click(function () {
+                var checkStatus = table.checkStatus('tbRole')
+                ,data = checkStatus.data; //获取选中的数据
+
+                if(data.length === 0){
+                    layer.msg('请选择需要删除的数据');
+                } else {
+                    layer.confirm('是否要删除，删除后不可恢复', {icon: 2}, function(index){
+                        var idList = new Array();
+                        $.each(checkStatus.data, function (index, item) {
+                            idList.push(item.id)
+                        });
+                        csrftoken();
+                        $.ajax({
+                            url: '/backend/role/delete/multiple/',
+                            type: 'POST',
+                            dataType: 'JSON',
+                            data: {
+                                'data': JSON.stringify(idList)
+                            },
+                            success:function (arg) {
+                                if(arg.status == 200){
+                                    layer.msg('删除成功', {icon: 1});
+                                    tableObj.reload()
+                                }else {
+                                    layer.msg(arg.msg, {icon: 2});
+                                }
+                            },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('删除失败', {icon: 2});
+                                }
+                            }
+                        });
+                    })
+                }
+            });
+
+            function isMobile() {
+                    var userAgentInfo = navigator.userAgent;
+
+                    var mobileAgents = [ "Android", "iPhone", "SymbianOS", "Windows Phone", "iPad","iPod"];
+
+                    var mobile_flag = false;
+
+                    //根据userAgent判断是否是手机
+                    for (var v = 0; v < mobileAgents.length; v++) {
+                        if (userAgentInfo.indexOf(mobileAgents[v]) > 0) {
+                            mobile_flag = true;
+                            break;
+                        }
+                    }
+                     var screen_width = window.screen.width;
+                     var screen_height = window.screen.height;
+
+                     //根据屏幕分辨率判断是否是手机
+                     if(screen_width < 500 && screen_height < 800){
+                         mobile_flag = true;
+                     }
+
+                     return mobile_flag;
+                }
+        })
+    </script>
+{% endblock %}

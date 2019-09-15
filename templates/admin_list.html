@@ -1,0 +1,613 @@
+{% extends 'base/index.html' %}
+{% block title %}
+    <link rel="stylesheet" href="/static/layui/lay/modules/formselect/formSelects-v4.css">
+    <title>用户管理</title>
+    <style>
+        #addAdmin .layui-form-item .layui-form-label{
+            padding: 0;
+            line-height: 40px;
+            width: auto;
+            padding-right: 5px;
+            padding-left: 40px;
+        }
+        #addAdmin .layui-form-item .layui-form-label{
+            width: auto;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb" style="font-size: 18px">
+        <li><a href="">首页</a></li>
+        <li><a style="color: #666;" href="{% url 'admin_list' %}">用户管理</a></li>
+    </ol>
+{% endblock %}
+
+{% block page-content %}
+    <!--搜索-->
+
+
+    <div class="layui-card" style="padding: 10px 13px;">
+        <div class="layui-row" style="padding: 10px;">
+            <button id="addBtn" class="layui-btn layui-btn-normal layui-btn-sm">
+                <i class="layui-icon layui-icon-add-1"></i>添加管理员
+            </button>
+            <button id="deleteBtn" class="layui-btn layui-btn-danger layui-btn-sm">
+                <i class="layui-icon layui-icon-delete"></i>删除
+            </button>
+            <button id="setPasswdBtn" class="layui-btn layui-btn layui-btn-sm">
+                <i class="layui-icon"></i>重置密码
+            </button>
+        </div>
+
+        <table class="layui-hide" id="tbAdmin" lay-filter="line-tool"></table>
+
+        <script type="text/html" id="barTable">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">编辑</button>
+                {{# if(d.status === '已启用'){
+                }}
+                    <a class="layui-btn layui-btn-warm layui-btn-xs" lay-event="set-status">禁用</a>
+                {{# } else{
+                }}
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="set-status">启用</a>
+                {{# }
+                }}
+                <button class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</button>
+            </div>
+        </script>
+
+        <script type="text/html" id="cell_status">
+            {{#  if(d.status === '已启用'){
+            }}
+                <span class="layui-badge layui-bg-blue">已启用</span>
+            {{#  } else{
+            }}
+                <span class="layui-badge">已禁用</span>
+            {{#  }
+            }}
+        </script>
+    </div>
+
+    <!--添加用户信息-->
+    <form id="addAdmin" style="display: none; margin: 25px 20px 0 0;" class="layui-form" lay-filter="addForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" required  lay-verify="required|username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-block">
+                <select name="role" xm-select="select1">
+                    <option value="">---</option>
+                    <!--<option value="1">超级管理员</option>-->
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="email" required  lay-verify="" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="passwd1" required  lay-verify="required|passwd" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">确认密码</label>
+            <div class="layui-input-block">
+                <input type="text" name="passwd2" required  lay-verify="required|passwd" placeholder="请输入确认密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="addSave">
+                    添加
+                </button>
+                <button onclick="return false" id="cancelAdd" class="layui-btn layui-btn-primary">
+                    取消
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <form id="editAdmin" style="display: none; margin: 25px 20px 0 0;" class="layui-form" lay-filter="editForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-block">
+                <input type="text" name="username" required  lay-verify="required|username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">角色</label>
+            <div class="layui-input-block">
+                <select id="editRole" name="role" xm-select="select2">
+                    <option value="">---</option>
+                    <!--<option value="1">超级管理员</option>
+                    <option value="2">普通管理员</option>-->
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">邮箱</label>
+            <div class="layui-input-block">
+                <input type="text" name="email" required  lay-verify="" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <button class="layui-btn layui-btn-normal" lay-submit lay-filter="editSave">
+                    编辑
+                </button>
+                <button onclick="return false" id="cancelEdit" class="layui-btn layui-btn-primary">
+                    取消
+                </button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block extra-bottom-js %}
+    <script>
+
+        // csrf
+        function csrftoken() {
+            /*********** csrftoken开始****************/
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            /*********** csrftoken结束****************/
+        }
+
+        layui.config({
+            base: '/static/layui/lay/modules/formselect/'
+        }).extend({
+            formSelects: 'formSelects-v4'
+        });
+
+        layui.use(['element', 'table', 'form', 'jquery', 'laydate', 'formSelects'], function() {
+            var element = layui.element,
+            table = layui.table,
+            $ = layui.jquery,
+            myForm = layui.form,
+            formSelects = layui.formSelects,
+            laydate = layui.laydate;
+
+            var tableObj = table.render({
+                elem: '#tbAdmin'
+                ,url: '/backend/admin/view/'
+                ,cellMinWidth: 80
+                ,page: true                                    //开启分页
+                ,limit: 20
+                ,limits: [10,20,30]
+                ,defaultToolbar: []
+                ,cols: [[
+                    {type: 'checkbox', width: 50}
+                    ,{field:'index', title: '序号', type: 'numbers', width: 80}
+                    ,{field:'name', title: '用户名', width: 200}
+                    ,{field:'role', title: '拥有角色'}
+                    ,{field:'last_login', title: '上一次登录', minWidth: 200}
+                    ,{field:'status', title: '状态', templet: '#cell_status', width: 120}
+                    ,{align:'center', toolbar: '#barTable', width: 200}
+                ]]
+            });
+
+            var mobile_flag = isMobile();
+
+            table.on('tool(line-tool)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+                if(layEvent === 'edit'){
+                    var area = null;
+                    if(mobile_flag){
+                        area = ['100%', '100%']
+                    }else {
+                        area = ['40%', '400px']
+                    }
+                    layer.open({
+                        type    : 1,
+                        title   : '编辑管理员',
+                        area    : area,
+                        fixed   : false, //不固定
+                        maxmin  : true,
+                        content : $("#editAdmin"),
+                        success : function(index, layero){
+                            $("#editAdmin").attr('edit-id', data.id);
+                            myForm.val('editForm', {
+                                username: data.name,
+                                email: data.email,
+                            });
+
+                            $.ajax({
+                                url: '/backend/admin/role/' + data.id,
+                                type: 'GET',
+                                dataType: 'JSON',
+                                success: function (arg) {
+                                    if(arg.status == 200){
+                                        //local模式本地数据,获取所有角色
+                                        formSelects.data('select2', 'local', {
+                                            arr: arg.roles
+                                        });
+                                        var arr = new Array();
+                                        $.each(arg.data, function (index, item) {
+                                            arr.push(item.value)
+                                        });
+                                        // 选中拥有角色
+                                        formSelects.value('select2', arr);
+                                    }else {
+                                        layer.msg('获取角色失败', {icon: 2})
+                                    }
+                                },
+                                error :function (arg) {
+                                     //get the status code
+                                    if (arg.status == 403) {
+                                        layer.msg(arg.responseText, {icon: 2})
+                                    } else {
+                                        layer.msg('获取角色失败', {icon: 2});
+                                    }
+                                }
+                            });
+                            myForm.render();
+
+                        },
+                        cancel  : function(index, layero){
+                            layer.close(index);
+                            // 清空编辑表单的值
+                            document.getElementById("editAdmin").reset();
+                            //return false 开启该代码可禁止点击该按钮关闭
+                        }
+                    });
+
+                } else if(layEvent === 'del'){
+                    layer.confirm('是否要删除 '+ data.name +'，删除后不可恢复', {title: '确认删除',icon: 2}, function(index){
+                        //向服务端发送删除指令
+                        csrftoken();
+                        $.ajax({
+                            url: "/backend/admin/delete/" + data.id,
+                            type: "POST",
+                            dataType: "JSON",
+                            success:function (arg) {
+                                if(arg.status == 200){
+                                    layer.msg("删除成功", {icon: 1});
+                                    obj.del();              //删除对应行（tr）的DOM结构
+                                    layer.close(index);
+                                }else {
+                                    layer.msg(arg.msg, {icon: 2});
+                                }
+                            },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('删除失败', {icon: 2});
+                                }
+                            }
+                        })
+                    });
+                } else if(layEvent === 'set-status'){
+                    var statusText = obj.tr.find('a[lay-event="set-status"]').text();
+                    layer.confirm('是否要'+ statusText + ' ' + data.name, {title: '设置状态',icon: 3}, function(index){
+                        if(statusText == '启用'){
+                            var status = "True"
+                        }else {
+                            var status = "False"
+                        }
+                        csrftoken();
+                        $.ajax({
+                            url: "/backend/admin/update/status/" + data.id,
+                            data: {
+                                "status": status
+                            },
+                            type: "POST",
+                            dataType: "JSON",
+                            success:function (arg) {
+                                if(arg.status == 200){
+                                    layer.msg("设置成功", {icon: 1});
+                                    tableObj.reload();
+                                }else {
+                                    layer.msg(arg.msg, {icon: 2});
+                                }
+                            },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('设置失败', {icon: 2});
+                                }
+                            }
+                        })
+                    });
+
+                }
+            });
+
+            $("#deleteBtn").click(function () {
+                var checkStatus = table.checkStatus('tbAdmin')
+                ,data = checkStatus.data; //获取选中的数据
+
+                if(data.length === 0){
+                    layer.msg('请选择需要删除的数据');
+                } else {
+                    layer.confirm('是否要删除，删除后不可恢复', {icon: 2}, function(index){
+                        var idList = new Array();
+                        $.each(checkStatus.data, function (index, item) {
+                            idList.push(item.id)
+                        });
+                        csrftoken();
+                        $.ajax({
+                            url: '/backend/admin/delete/multiple/',
+                            type: 'POST',
+                            dataType: 'JSON',
+                            data: JSON.stringify(idList),
+                            success:function (arg) {
+                                if(arg.status == 200){
+                                    layer.msg('删除成功', {icon: 1});
+                                    tableObj.reload()
+                                }else {
+                                    layer.msg(arg.msg, {icon: 2});
+                                }
+                            },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('删除失败', {icon: 2});
+                                }
+                            }
+                        });
+                    })
+                }
+            });
+
+            $("#setPasswdBtn").click(function () {
+                var checkStatus = table.checkStatus('tbAdmin')
+                ,data = checkStatus.data; //获取选中的数据
+
+                if(data.length === 0){
+                    layer.msg('请选择需要重置的管理员');
+                } else {
+                    layer.confirm('是否重置管理员密码', {icon: 3}, function(index){
+                        var idList = new Array();
+                        $.each(checkStatus.data, function (index, item) {
+                            idList.push(item.id)
+                        });
+                        csrftoken();
+                        $.ajax({
+                            url: '/backend/admin/update/password/set/',
+                            type: 'POST',
+                            dataType: 'JSON',
+                            data: JSON.stringify(idList),
+                            success:function (arg) {
+                                if(arg.status == 200){
+                                    layer.msg('重置成功', {icon: 1});
+                                    tableObj.reload()
+                                }else {
+                                    layer.msg(arg.msg, {icon: 2});
+                                }
+                            },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('重置失败', {icon: 2});
+                                }
+                            }
+                        });
+                    })
+                }
+            });
+
+            $("#addBtn").click(function () {
+                var area = null;
+                if(mobile_flag){
+                    area = ['100%', '100%']
+                }else {
+                    area = ['40%', '500px']
+                }
+
+                layer.open({
+                    type    : 1,
+                    title   : '添加管理员',
+                    area    : area,
+                    fixed   : false, //不固定
+                    maxmin  : true,
+                    content : $("#addAdmin"),
+                    success : function(){
+                        $.ajax({
+                            url: '/backend/admin/add/',
+                            type: 'GET',
+                            dataType: 'JSON',
+                            success: function (arg) {
+                                if(arg.status == 200){
+                                    //local模式本地数据,获取所有角色
+                                    formSelects.data('select1', 'local', {
+                                        arr: arg.data
+                                    });
+                                }else {
+                                    layer.msg('获取角色失败', {icon: 2})
+                                }
+                            },
+                            error :function (arg) {
+                                 //get the status code
+                                if (arg.status == 403) {
+                                    layer.msg(arg.responseText, {icon: 2})
+                                } else {
+                                    layer.msg('获取角色失败', {icon: 2});
+                                }
+                            }
+                        });
+                    },
+                    cancel  : function(index, layero){
+                        layer.close(index);
+                        // 清空编辑表单的值
+                        document.getElementById("addAdmin").reset();
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                })
+            });
+
+            $("#cancelAdd").click(function () {
+                layer.closeAll();
+                // 清空编辑表单的值
+                document.getElementById("addAdmin").reset();
+            });
+
+            $("#cancelEdit").click(function () {
+                layer.closeAll();
+                // 清空编辑表单的值
+                document.getElementById("editAdmin").reset();
+            });
+
+            // 监听提交,添加管理员
+            myForm.on('submit(addSave)', function(data){
+                csrftoken();
+                $.ajax({
+                    url: '/backend/admin/add/',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        'data' : JSON.stringify(data.field)
+                    },
+                    success:function (arg) {
+                        if(arg.status == 200){
+                            layer.closeAll();
+                            layer.msg('添加成功', {icon:1});
+                            tableObj.reload();
+                            document.getElementById("addAdmin").reset();
+                        }else {
+                            layer.msg(arg.msg, {icon: 2})
+                        }
+                    },
+                    error :function (arg) {
+                         //get the status code
+                        if (arg.status == 403) {
+                            layer.msg(arg.responseText, {icon: 2})
+                        } else {
+                            layer.msg('添加失败', {icon: 2});
+                        }
+                    }
+                });
+                return false;
+            });
+
+            myForm.on('submit(editSave)', function(data){
+                var id = $("#editAdmin").attr('edit-id');
+                if(!id){
+                    layer.msg('该管理员不存在', {icon: 2})
+                }
+                csrftoken();
+                $.ajax({
+                    url: '/backend/admin/update/' + id,
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {
+                        'data' : JSON.stringify(data.field)
+                    },
+                    success:function (arg) {
+                        if(arg.status == 200){
+                            layer.closeAll();
+                            layer.msg('编辑成功', {icon:1});
+                            tableObj.reload();
+                            document.getElementById("editAdmin").reset();
+                        }else {
+                            layer.msg(arg.msg, {icon: 2})
+                        }
+                    },
+                    error :function (arg) {
+                         //get the status code
+                        if (arg.status == 403) {
+                            layer.msg(arg.responseText, {icon: 2})
+                        } else {
+                            layer.msg('编辑失败', {icon: 2});
+                        }
+                    }
+                });
+                return false;
+            });
+            myForm.verify({
+                username: function(value, item){ //value：表单的值、item：表单的DOM对象
+                    if(!new RegExp("^[a-zA-Z0-9\\s·]+$").test(value)){
+                        return '用户名只能用英文和数字组合';
+                    }
+                    if(/(^\_)|(\__)|(\_+$)/.test(value)){
+                        return '用户名首尾不能出现下划线\'_\'';
+                    }
+                    if(/^\d+\d+\d$/.test(value)){
+                        return '用户名不能全为数字';
+                    }
+                }
+
+                //我们既支持上述函数式的方式，也支持下述数组的形式
+                //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
+                ,passwd: [
+                /^[\S]{6,12}$/
+                ,'密码必须6到12位，且不能出现空格'
+                ]
+            });
+
+            function isMobile() {
+                    var userAgentInfo = navigator.userAgent;
+
+                    var mobileAgents = [ "Android", "iPhone", "SymbianOS", "Windows Phone", "iPad","iPod"];
+
+                    var mobile_flag = false;
+
+                    //根据userAgent判断是否是手机
+                    for (var v = 0; v < mobileAgents.length; v++) {
+                        if (userAgentInfo.indexOf(mobileAgents[v]) > 0) {
+                            mobile_flag = true;
+                            break;
+                        }
+                    }
+                     var screen_width = window.screen.width;
+                     var screen_height = window.screen.height;
+
+                     //根据屏幕分辨率判断是否是手机
+                     if(screen_width < 500 && screen_height < 800){
+                         mobile_flag = true;
+                     }
+
+                     return mobile_flag;
+                }
+
+        })
+    </script>
+{% endblock %}

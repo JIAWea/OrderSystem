@@ -1,0 +1,455 @@
+{% extends 'base/index.html' %}
+{% block title %}
+    <title>用户管理</title>
+    <style>
+        .detail{
+            margin-bottom: 10px;
+        }
+        .table tbody tr td{
+              overflow: hidden;
+              text-overflow:ellipsis;
+              white-space: nowrap;
+         }
+        #tbDetail tr th{
+            background-color: #f2f2f2;
+        }
+    </style>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb" style="font-size: 18px">
+        <li><a href="">首页</a></li>
+        <li><a href="{% url 'order_list' %}">订单列表</a></li>
+        <li><a style="color: #666;" href="javascript:;">订单详情</a></li>
+    </ol>
+{% endblock %}
+
+{% block page-content %}
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>买家编号</span>：<span style="color: red;">{{ number }}</span>
+        </fieldset>
+    </div>
+
+    <!--编辑表单-->
+    <div class="detail">
+        <fieldset class="layui-elem-field layui-field-title" style="margin: 0;font-size: 20px;">
+            <span>订单任务详情</span>
+        </fieldset>
+
+        <div class="row my-btn-group">
+            <div class="btn-group pull-right" role="group" >
+                <button id="editBtn" type="button" class="btn btn-default btn-detail">编辑</button>
+                <button id="editBtnSave" type="button" class="btn btn-default btn-detail">确认</button>
+                <button id="reloadBtn" type="button" class="btn btn-default btn-detail">刷新</button>
+            </div>
+
+            <div style="margin: 50px 0 0 10px;">
+                <table class="table table-bordered" id="tbDetail" style="table-layout: fixed;" edit-id="{{ obj_id }}">
+                    <tbody>
+                        <tr>
+                            <th style="width: 33%;">站点</th>
+                            <th style="width: 33%;">操作员</th>
+                            <th style="width: 33%;">订单号</th>
+                        </tr>
+                        <tr>
+                            <td id="site"></td>
+                            <td id="manager"></td>
+                            <td id="order_number"></td>
+                        </tr>
+                        <tr>
+                            <th>搜索关键字</th>
+                            <th>分享链接</th>
+                            <th>购买时间</th>
+                        </tr>
+                        <tr>
+                            <td id="select_key"></td>
+                            <td id="share_type"></td>
+                            <td id="create_time"></td>
+                        </tr>
+                        <tr>
+                            <th>目标ASIN</th>
+                            <th>目标商品标题</th>
+                            <th>订单状态</th>
+                        </tr>
+                        <tr>
+                            <td id="target_asin"></td>
+                            <td id="target_goods_title"></td>
+                            <td id="order_status"></td>
+                        </tr>
+                        <tr>
+                            <th>店铺ID</th>
+                            <th>产品单价</th>
+                            <th>买家状态</th>
+                        </tr>
+                        <tr>
+                            <td id="store_id"></td>
+                            <td id="goods_price"></td>
+                            <td id="buyer_status"></td>
+                        </tr>
+                        <tr>
+                            <th>购买金额</th>
+                            <th>折扣码</th>
+                            <th>折扣off</th>
+                        </tr>
+                        <tr>
+                            <td id="purchase_price"></td>
+                            <td id="discount_code"></td>
+                            <td id="order_discount"></td>
+                        </tr>
+                        <tr>
+                            <th>付款方式</th>
+                            <th>信用卡_卡号</th>
+                            <th>信用卡_过期时间</th>
+                        </tr>
+                        <tr>
+                            <td id="mode_payment"></td>
+                            <td id="credit_card"></td>
+                            <td id="credit_card_expiry"></td>
+                        </tr>
+                        <tr>
+                            <th>CVV</th>
+                            <th>信用卡来源</th>
+                            <th>First Name</th>
+                        </tr>
+                        <tr>
+                            <td id="card_cvv"></td>
+                            <td id="credit_card_origin"></td>
+                            <td id="first_name"></td>
+                        </tr>
+                        <tr>
+                            <th>Last Name</th>
+                            <th>Address1</th>
+                            <th>City</th>
+                        </tr>
+                        <tr>
+                            <td id="last_name"></td>
+                            <td id="address1"></td>
+                            <td id="city"></td>
+                        </tr>
+                        <tr>
+                            <th>State</th>
+                            <th>Zip</th>
+                            <th>phones</th>
+                        </tr>
+                        <tr>
+                            <td id="state"></td>
+                            <td id="zip"></td>
+                            <td id="phones"></td>
+                        </tr>
+                        <tr>
+                            <th>Review标题</th>
+                            <th>Review内容</th>
+                            <th>Review时间</th>
+                        </tr>
+                        <tr>
+                            <td id="review_title"></td>
+                            <td id="review_content"></td>
+                            <td id="review_time"></td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Feedback标题</th>
+                            <th>Feedback时间</th>
+                        </tr>
+                        <tr>
+                            <td id=""></td>
+                            <td id="feedback_title"></td>
+                            <td id="feedback_time"></td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th>Review状态</th>
+                            <th>Feedback状态</th>
+                        </tr>
+                        <tr>
+                            <td id=""></td>
+                            <td id="review_status"></td>
+                            <td id="feedback_status"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra-bottom-js %}
+    <script>
+
+        // csrf
+        function csrftoken() {
+            /*********** csrftoken开始****************/
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+            /*********** csrftoken结束****************/
+        }
+
+        // layui
+        layui.use(['element', 'laydate'], function() {
+            var laydate = layui.laydate;
+
+            // 日期正则表达式
+            var date_reg = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+
+            $(function () {
+
+                initTable();
+
+                //判断是否是手机
+                var mobile_flag = isMobile();
+                if(mobile_flag){
+                    // layer.msg('手机');
+                    $('#tbDetail tr td').each(function () {
+                        $(this).on('click', function () {
+                            if($(this).find('input').length == 0){
+                                var top = $(this).offset().top - $(document).scrollTop() + 'px';
+                                var left = $(this).offset().left + 'px';
+                                if (this.offsetWidth < this.scrollWidth) {
+                                    var that = this;
+                                    var text = $(this).text();
+                                    layer.open({
+                                        type: 1,
+                                        {#offset: [top, left],#}
+                                        {#area: ['21%'],#}
+                                        shade: false,
+                                        title: false, //不显示标题
+                                        content: text, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                                    });
+                                }
+                            }
+                        })
+                    });
+
+                }else{
+                    // layer.msg('电脑')
+                    // 单元格占一行，点击显示全部内容
+                    $('#tbDetail tr td').each(function () {
+                        $(this).on('click', function () {
+                            if($(this).find('input').length == 0){
+                                var top = $(this).offset().top - $(document).scrollTop() + 'px';
+                                var left = $(this).offset().left + 'px';
+                                if (this.offsetWidth < this.scrollWidth) {
+                                    var that = this;
+                                    var text = $(this).text();
+                                    layer.open({
+                                        type: 1,
+                                        offset: [top, left],
+                                        area: ['21%'],
+                                        shade: false,
+                                        title: false, //不显示标题
+                                        content: text, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+                                    });
+                                }
+                            }
+                        })
+                    });
+                }
+
+
+
+                $("#editBtn").click(function () {
+                    if($("input[name='order_number']").length == 0){
+                        var order_number_text = $("#order_number").text();
+                        var input = '<input type="test" name="order_number" style="width: 100%" class="form-class" value="'+ order_number_text +'">'
+                        $("#order_number").html(input);
+
+                        var order_status_text = $("#order_status").text();
+                        var input = '<input type="test" name="order_status" style="width: 100%" class="form-class" value="'+ order_status_text +'">'
+                        $("#order_status").html(input);
+
+                        var buyer_status_text = $("#buyer_status").text();
+                        var input = '<input type="test" name="buyer_status" style="width: 100%" class="form-class" value="'+ buyer_status_text +'">'
+                        $("#buyer_status").html(input);
+
+                        var review_status_text = $("#review_status").text();
+                        var input = '<input type="test" name="review_status" style="width: 100%" class="form-class" value="'+ review_status_text +'">'
+                        $("#review_status").html(input);
+
+                        var feedback_status_text = $("#feedback_status").text();
+                        var input = '<input type="test" name="feedback_status" style="width: 100%" class="form-class" value="'+ feedback_status_text +'">'
+                        $("#feedback_status").html(input);
+
+                        var create_time_text = $("#create_time").text();
+                        var input = '<input type="test" name="create_time" style="width: 100%" class="form-class" value="'+ create_time_text +'">'
+                        $("#create_time").html(input);
+
+                        var review_time_text = $("#review_time").text();
+                        var input = '<input type="test" name="review_time" style="width: 100%" class="form-class" value="'+ review_time_text +'">'
+                        $("#review_time").html(input);
+
+                        var feedback_time_text = $("#feedback_time").text();
+                        var input = '<input type="test" name="feedback_time" style="width: 100%" class="form-class" value="'+ feedback_time_text +'">'
+                        $("#feedback_time").html(input);
+                    }
+                    $("#editBtn").attr('has-edit', 1)
+                });
+
+                $("#editBtnSave").click(function () {
+                    $("#editBtn").attr('has-edit', 0);
+                    if($("input[name='order_number']").length != 0){
+                        var order_number = $("input[name='order_number']").val();
+                        var order_status = $("input[name='order_status']").val();
+                        var buyer_status = $("input[name='buyer_status']").val();
+                        var review_status = $("input[name='review_status']").val();
+                        var feedback_status = $("input[name='feedback_status']").val();
+                        var create_time = $("input[name='create_time']").val();
+                        var review_time = $("input[name='review_time']").val();
+                        var feedback_time = $("input[name='feedback_time']").val();
+
+                        if(!date_reg.test(create_time)){
+                            layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                            return false
+                        }
+                        if(!date_reg.test(review_time)){
+                            layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                            return false
+                        }
+                        if(!date_reg.test(feedback_time)){
+                            layer.msg("日期格式必须为（月/日/年）", {icon: 2});
+                            return false
+                        }
+
+                        if(!order_number){
+                            layer.msg('订单号不能为空', {icon: 2});
+                            return false
+                        }
+
+                        var id = $("#tbDetail").attr('edit-id');
+                        if(!id){
+                            layer.msg('此订单错误', {icon: 2});
+                            return false
+                        }
+
+                        csrftoken();
+                        $.ajax({
+                            url: '/backend/orders/edit/',
+                            type: 'POST',
+                            data: {
+                                'id': id,
+                                'order_number': order_number,
+                                'order_status': order_status,
+                                'buyer_status': buyer_status,
+                                'review_status': review_status,
+                                'feedback_status': feedback_status,
+                                'create_time': create_time,
+                                'review_time': review_time,
+                                'feedback_time': feedback_time,
+                            },
+                            dataType: 'JSON',
+                            success: function (arg) {
+                                if(arg.status == 200){
+                                    $('#tbDetail tr td').each(function () {
+                                        if($(this).find('input').length != 0){
+                                            var text = $(this).find('input').val();
+                                            $(this).html(text);
+                                        }
+                                    });
+                                    initTable();
+                                    layer.msg('编辑成功', {icon: 1})
+                                }else {
+                                    layer.msg(arg.msg, {icon: 2})
+                                }
+                            },
+                            error: function (arg) {
+                                layer.msg("编辑失败", {icon: 2})
+                            }
+                        })
+                    }else{
+                        layer.msg("修改信息请先点击编辑", {icon: 2});
+                        return false
+                    }
+
+
+
+
+                });
+
+                $("#reloadBtn").click(function () {
+                    $("#editBtn").attr('has-edit', 0);
+                    $('#tbDetail tr td').each(function () {
+                        if($(this).find('input').length != 0){
+                            var text = $(this).find('input').val();
+                            $(this).html(text);
+                        }
+                    });
+                    initTable();
+                });
+
+                function isMobile() {
+                    var userAgentInfo = navigator.userAgent;
+
+                    var mobileAgents = [ "Android", "iPhone", "SymbianOS", "Windows Phone", "iPad","iPod"];
+
+                    var mobile_flag = false;
+
+                    //根据userAgent判断是否是手机
+                    for (var v = 0; v < mobileAgents.length; v++) {
+                        if (userAgentInfo.indexOf(mobileAgents[v]) > 0) {
+                            mobile_flag = true;
+                            break;
+                        }
+                    }
+                     var screen_width = window.screen.width;
+                     var screen_height = window.screen.height;
+
+                     //根据屏幕分辨率判断是否是手机
+                     if(screen_width < 500 && screen_height < 800){
+                         mobile_flag = true;
+                     }
+
+                     return mobile_flag;
+                }
+
+
+            })
+
+        });
+
+        function initTable() {
+            $.ajax({
+                url: '/backend/orders/edit/?id=' + {{ obj_id }},
+                type: 'GET',
+                dataType: 'JSON',
+                success: function (arg) {
+                    if(arg.code == 0){
+                        $.each(arg.data, function (key, value) {
+                            if(!value){
+                                value = ""
+                            }
+                            $("#" + key + "").html(value);
+                        })
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}

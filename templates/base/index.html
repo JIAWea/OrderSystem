@@ -1,0 +1,277 @@
+{% extends 'base/base.html' %}
+
+{% block body %}
+	<div id="container" class="effect mainnav-lg navbar-fixed">
+
+		<!--NAVBAR-->
+		<header id="navbar" style="z-index: 999;">
+			<div id="navbar-container" class="boxed">
+
+				<div class="navbar-header">
+					<a href="/backend/index/" class="navbar-brand">
+						<img src="/static/img/logo.png" alt="Nifty Logo" class="brand-icon">
+						<div class="brand-title">
+							<span class="brand-text">后台管理</span>
+						</div>
+					</a>
+				</div>
+				<!--End brand logo & name-->
+
+				<!--Navbar Dropdown-->
+				<div class="navbar-content clearfix">
+					<ul class="nav navbar-top-links pull-left">
+
+						<!--Navigation toogle button-->
+						<li class="tgl-menu-btn">
+							<a class="mainnav-toggle" href="#">
+								<i class="fa fa-navicon fa-lg"></i>
+							</a>
+						</li>
+						<!--End Navigation toogle button-->
+
+					</ul>
+					<ul class="nav navbar-top-links pull-right">
+
+						<!--User dropdown-->
+						<li id="dropdown-user" class="dropdown">
+							<a href="#" data-toggle="dropdown" class="dropdown-toggle text-right">
+{#								<span class="pull-right">#}
+{#									<img class="img-circle img-user media-object" src="/static/img/av1.png" alt="Profile Picture">#}
+{#								</span>#}
+
+								<div class="username hidden-xs" name="{{ request.user }}">
+                                    <span uid="{{ request.user.id }}" style="font-size: 14px">您好！{{ request.user }}</span>
+                                    <i style="vertical-align: 2px;" class="fa fa-sort-desc" aria-hidden="true"></i>
+                                </div>
+
+							</a>
+
+							<div class="dropdown-menu dropdown-menu-right ">
+								<!-- User dropdown menu -->
+								<ul class="head-list">
+									<li>
+										<a data-toggle="modal" data-target="#Modal" href="#">
+                                            <i class="fa fa-gear fa-fw fa-lg"></i>
+                                            更改密码
+										</a>
+									</li>
+                                    <li>
+										<a href="{% url 'logout' %}">
+                                            <i class="fa fa-times fa-fw fa-lg"></i>
+                                            退出登录
+										</a>
+									</li>
+								</ul>
+
+
+							</div>
+						</li>
+						<!--End user dropdown-->
+					</ul>
+				</div>
+				<!--End Navbar Dropdown-->
+			</div>
+		</header>
+		<!--END NAVBAR-->
+
+		<div class="boxed">
+			<!--CONTENT CONTAINER-->
+			<div id="content-container">
+
+				<!--Page Title-->
+				<div id="page-title" class="layui-card layadmin-header" style="padding-left: 0;">
+                    {% block breadcrumb  %}
+
+                    {% endblock %}
+				</div>
+				<!--End page title-->
+
+				<!--Page content-->
+	            <div id="page-content">
+                    <!--更改密码-->
+                    <div id="setPwdFrom">
+                    <div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="exampleModalLabel">更改密码</h4>
+                                </div>
+                                <div class="modal-body">
+                                <form id="changepassword">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="control-label">旧密码</label>
+                                        <span style="color: red;">*</span>
+                                        <input type="password" class="form-control" name="old_password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message-text" class="control-label">新密码</label>
+                                        <span style="color: red;">*</span>
+                                        <input type="password" class="form-control" name="new_password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message-text" class="control-label">确认新密码</label>
+                                        <span style="color: red;">*</span>
+                                        <input type="password" class="form-control" name="repeat_password">
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a data-dismiss="modal" class="btn btn-default" >取消</a>
+                                        <a id="SetPassword" class="btn btn-primary" >添加</a>
+                                    </div>
+                                </form>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+
+                    <!--添加管理员-->
+                <div id="addUserForm">
+                    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title" id="exampleModalLabel">添加管理员</h4>
+                                </div>
+                                <div class="modal-body">
+                                <form id="backendUserAdd">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="control-label">用户名</label>
+                                        <span style="color: red;">*</span>
+                                        <input type="text" class="form-control" name="username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message-text" class="control-label">密码</label>
+                                        <span style="color: red;">*</span>
+                                        <input type="password" class="form-control" name="password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message-text" class="control-label">确认密码</label>
+                                        <span style="color: red;">*</span>
+                                        <input type="password" class="form-control" name="repeat_password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="message-text" class="control-label">权限分配</label>
+                                        <span style="color: red;">*</span>
+                                        <p>
+                                            <span class="perm">用户管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="0">
+                                            </span>
+                                            <span class="perm">文章管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="1">
+                                            </span>
+                                            <span class="perm">公告管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="2">
+                                            </span>
+                                            <span class="perm">报装管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="3">
+                                            </span>
+                                            <span class="perm">报修管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="4">
+                                            </span>
+                                            <span class="perm">轮播管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="5">
+                                            </span>
+                                            <span class="perm">投诉建议管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="6">
+                                            </span>
+                                            <span class="perm">账单管理
+                                                <input class="perm-input" type="checkbox" name="permissionList" value="7">
+                                            </span>
+                                        </p>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <a data-dismiss="modal" class="btn btn-default" >取消</a>
+                                        <a id="UserAddSave" class="btn btn-primary" >添加</a>
+                                        <!--<button type="submit" id="UserAddSave" class="btn btn-primary" >添加</button>-->
+                                    </div>
+                                </form>
+                                </div>
+
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                    {% block page-content %}
+
+                    {% endblock %}
+                </div>
+            </div>
+			<!--END CONTENT CONTAINER-->
+
+			<!--MAIN NAVIGATION-->
+			<nav id="mainnav-container">
+				<div id="mainnav">
+					<!--Menu-->
+					<div id="mainnav-menu-wrap">
+						<div class="nano">
+							<div class="nano-content">
+								<ul id="mainnav-menu" class="list-group">
+									<li class="list-header">菜单栏</li>
+                                    <li>
+										<a href="#">
+											<i class="fa fa-cog"></i>
+											<span class="menu-title">
+												<strong>设置</strong>
+											</span>
+											<i class="arrow"></i>
+										</a>
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="{% url 'admin_list' %}">用户管理</a></li>
+                                            <li><a href="{% url 'permission_role' %}">权限管理</a></li>
+										</ul>
+									</li>
+
+                                    <li class="">
+										<a href="{% url 'buyer_list' %}">
+											<i class="fa fa-user"></i>
+											<span class="menu-title">买家信息管理</span>
+										</a>
+									</li>
+
+                                    <li>
+										<a href="#">
+											<i class="fa fa-cog"></i>
+											<span class="menu-title">
+												<strong>订单信息管理</strong>
+											</span>
+											<i class="arrow"></i>
+										</a>
+										<!--Submenu-->
+										<ul class="collapse">
+											<li><a href="{% url 'order_list' %}">订单列表</a></li>
+                                            <li><a href="{% url 'order_detail' 1 %}">订单详情</a></li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<!--End menu-->
+				</div>
+			</nav>
+			<!--END MAIN NAVIGATION-->
+		</div>
+
+        <!-- FOOTER -->
+        <!--<footer id="footer">
+            <div class="hide-fixed pull-right pad-rgt">Currently v1</div>-->
+            <!--<p class="pad-lft">&#0169; 2015 Your Company</p>
+        </footer>-->
+        <!-- END FOOTER -->
+
+
+        <!-- SCROLL TOP BUTTON -->
+        <button id="scroll-top" class="btn"><i class="fa fa-chevron-up"></i></button>
+
+	</div>
+	<!-- END OF CONTAINER -->
+    <script src="/static/js/jquery-2.1.1.min.js"></script>
+    <script src="/static/js/index.js"></script>
+{% endblock %}
