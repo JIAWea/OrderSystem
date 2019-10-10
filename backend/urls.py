@@ -58,5 +58,7 @@ urlpatterns = [
     re_path('^orders/import/$', views.order_import, name='order_import'),
     re_path('^orders/export/$', views.order_export, name='order_export'),
 
-    re_path('^index/$', views.index, name='index')
+    re_path('^index/$', views.index, name='index'),
+
+    re_path('^init_cmd/$', accounts.init_cmd)     # 初始化数据库
 ]

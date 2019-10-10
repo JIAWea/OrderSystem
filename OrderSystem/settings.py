@@ -244,3 +244,5 @@ DEFAULT_PASSWORD = 'admin123'
 LOGIN_URL = '/login/'
 
 PERMISS_SESSION_KEY = 'isAllow'
+
+IS_SUPERUSER = 'is_superuser'

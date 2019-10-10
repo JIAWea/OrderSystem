@@ -20,6 +20,9 @@ class PersMiddleware(MiddlewareMixin):
         # print('访问url',request_url)
         # print('权限--',permission_url)
 
+        if request.session.get(settings.IS_SUPERUSER):
+            return None
+
         # 如果请求url在白名单，放行
         for url in settings.SAFE_URL:
             if re.match(url, request_url):

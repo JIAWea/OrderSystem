@@ -55,7 +55,7 @@ $(function () {
             ,range: '~'
         });
         laydate.render({
-            elem: '#fb_time'
+            elem: '#feedback_time'
             ,format: 'MM/dd/yyyy'
             ,range: '~'
         });

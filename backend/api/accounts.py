@@ -81,7 +81,7 @@ def backenduser_add(request):
     user = request.user
     response = {}
     if request.method == "POST":
-        if user.is_authenticated():
+        if user.is_authenticated:
             content = str(request.body, encoding='utf-8')
             data = json.loads(content)                      # 转为字典类型
 
@@ -366,7 +366,7 @@ def admin_update(request, pk):
 def admin_status(request, pk):
     if request.method == "POST":
         status = request.POST.get("status")
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             BackendUser.objects.filter(pk=pk).update(is_active=status)
             return JsonResponse({
                 'status': 200
@@ -383,7 +383,7 @@ def admin_status(request, pk):
 # 单个删除管理员
 def admin_delete(request, pk):
     if request.method == "POST":
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             BackendUser.objects.filter(pk=pk).delete()
             return JsonResponse({'status': 200, 'msg': '删除成功'})
         else:
@@ -397,7 +397,7 @@ def admin_mulit_del(request):
     if request.method == "POST":
         content = str(request.body, encoding='utf-8')  # 字符串
         result = json.loads(content)
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             BackendUser.objects.filter(id__in=result).delete()
             return JsonResponse({'status': 200, 'msg': '删除成功'})
         else:
@@ -418,7 +418,7 @@ def admin_setpasswd(request):
             result = json.loads(content)
         except Exception:
             return JsonResponse({'status': 200, 'msg': '请发送JSON数据'})
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             admin = BackendUser.objects.filter(id__in=result)
             for obj in admin:
                 obj.set_password(DEFAULT_PASSWORD)
@@ -456,3 +456,74 @@ def admin_change_passwd(request):
                 return redirect("/logout")
         else:
             return JsonResponse({'err_msg': '原密码输入错误', })
+
+
+# 初始化数据库权限和菜单
+def init_cmd(request):
+    from OrderSystem.settings import DEBUG
+    if DEBUG is True:
+        from backend.models import Permission, Menu
+
+        Menu.objects.create(id=1, title='设置')
+        Menu.objects.create(id=2, title='订单信息管理')
+        Menu.objects.create(id=3, title='买家信息管理')
+
+        Permission.objects.create(id=1, name='用户管理', url='/backend/admin/list/', method='GET', menu_id=1,
+                                  parents_id=None)
+        Permission.objects.create(id=2, name='用户添加', url='/backend/admin/add/', method='POST', menu_id=None,
+                                  parents_id=1)
+        Permission.objects.create(id=3, name='用户删除', url='/backend/admin/edit/', method='POST', menu_id=None,
+                                  parents_id=1)
+        Permission.objects.create(id=4, name='用户修改', url='/backend/admin/delete/', method='POST', menu_id=None,
+                                  parents_id=1)
+        Permission.objects.create(id=5, name='用户查看', url='/backend/admin/view/', method='GET', menu_id=None,
+                                  parents_id=1)
+
+        Permission.objects.create(id=6, name='角色管理', url='/backend/role/list/', method='GET', menu_id=1,
+                                  parents_id=None)
+        Permission.objects.create(id=7, name='角色添加', url='/backend/role/add/', method='POST', menu_id=None,
+                                  parents_id=6)
+        Permission.objects.create(id=8, name='角色删除', url='/backend/role/delete/', method='POST', menu_id=None,
+                                  parents_id=6)
+        Permission.objects.create(id=9, name='角色修改', url='/backend/role/edit/', method='POST', menu_id=None,
+                                  parents_id=6)
+        Permission.objects.create(id=10, name='角色查看', url='/backend/role/view/', method='GET', menu_id=None,
+                                  parents_id=6)
+
+        Permission.objects.create(id=11, name='买家信息管理', url='/backend/buyers/list/', method='GET', menu_id=3,
+                                  parents_id=None)
+        Permission.objects.create(id=12, name='买家信息查看', url='/backend/buyers/view/', method='GET', menu_id=None,
+                                  parents_id=11)
+        Permission.objects.create(id=13, name='买家信息删除', url='/backend/buyers/delete/', method='POST', menu_id=None,
+                                  parents_id=11)
+        Permission.objects.create(id=14, name='买家搜索页信息修改', url='/backend/buyers/edit/', method='POST', menu_id=None,
+                                  parents_id=11)
+        Permission.objects.create(id=15, name='买家详情设备信息修改', url='/backend/buyers/device/edit/', method='POST',
+                                  menu_id=None, parents_id=11)
+        Permission.objects.create(id=16, name='买家详情买家信息修改', url='/backend/buyers/buyer/edit/', method='POST',
+                                  menu_id=None, parents_id=11)
+        Permission.objects.create(id=17, name='买家详情家庭信息修改', url='/backend/buyers/family/edit/', method='POST',
+                                  menu_id=None, parents_id=11)
+        Permission.objects.create(id=18, name='买家详情社交信息修改', url='/backend/buyers/internet/edit/', method='POST',
+                                  menu_id=None, parents_id=11)
+        Permission.objects.create(id=19, name='买家详情信用卡信息修改', url='/backend/buyers/card/edit/', method='POST',
+                                  menu_id=None, parents_id=11)
+        Permission.objects.create(id=20, name='买家详情会员状态修改', url='/backend/buyers/member/edit/', method='POST',
+                                  menu_id=None, parents_id=11)
+        Permission.objects.create(id=21, name='买家详情默认收货地址修改', url='/backend/buyers/address/edit/', method='POST',
+                                  menu_id=None, parents_id=11)
+
+        Permission.objects.create(id=22, name='订单信息管理', url='/backend/orders/list/', method='GET', menu_id=2,
+                                  parents_id=None)
+        Permission.objects.create(id=23, name='订单查看', url='/backend/orders/view/', method='GET', menu_id=None,
+                                  parents_id=22)
+        Permission.objects.create(id=24, name='订单删除', url='/backend/orders/delete/', method='POST', menu_id=None,
+                                  parents_id=22)
+        Permission.objects.create(id=25, name='订单详情修改', url='/backend/orders/edit/detail/', method='POST', menu_id=None,
+                                  parents_id=22)
+        Permission.objects.create(id=26, name='订单搜索页修改', url='/backend/orders/edit/', method='POST',
+                                  menu_id=None, parents_id=22)
+        print('初始化数据库...')
+        return JsonResponse({'code': 'ok'})
+    else:
+        return HttpResponseBadRequest("错误请求")

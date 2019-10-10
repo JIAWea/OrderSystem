@@ -30,6 +30,7 @@ def init_permission(request, current_user):
 
     # 保存用户权限url列表
     request.session[settings.PERMISS_SESSION_KEY] = permission_url_list
+    request.session[settings.IS_SUPERUSER] = current_user.is_superuser
 
     # 保存 权限菜单 和所有 菜单；用户登录后作菜单展示用
     # menu_list = list(Menu.objects.values('id', 'title', 'parent_id'))
