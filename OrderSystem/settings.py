@@ -207,6 +207,9 @@ try:
     if not os.path.isdir(EXCEL_PATH):
         os.makedirs(EXCEL_PATH, exist_ok=True)
         print('\t- Created folder {}'.format(EXCEL_PATH))
+    if not os.path.isdir(LOGS_FOLDER):
+        os.makedirs(LOGS_FOLDER, exist_ok=True)
+        print('\t- Created folder {}'.format(LOGS_FOLDER))
 
     # Windows下报错，需要手动新建文件夹
     if LOGGING and 'handlers' in LOGGING:
