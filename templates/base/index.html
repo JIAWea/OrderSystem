@@ -235,20 +235,13 @@
 										</a>
 									</li>
 
-                                    <li>
-										<a href="#">
-											<i class="fa fa-cog"></i>
-											<span class="menu-title">
-												<strong>订单信息管理</strong>
-											</span>
-											<i class="arrow"></i>
+                                    <li class="">
+										<a href="{% url 'order_list' %}">
+											<i class="fa fa-bars"></i>
+											<span class="menu-title">订单信息管理</span>
 										</a>
-										<!--Submenu-->
-										<ul class="collapse">
-											<li><a href="{% url 'order_list' %}">订单列表</a></li>
-                                            <li><a href="{% url 'order_detail' 1 %}">订单详情</a></li>
-										</ul>
 									</li>
+
 								</ul>
 							</div>
 						</div>

@@ -10,9 +10,9 @@ application = get_wsgi_application()
 
 from backend.models import Permission, Menu
 
-Menu.objects.create(id=1, name='设置')
-Menu.objects.create(id=2, name='订单信息管理')
-Menu.objects.create(id=3, name='买家信息管理')
+Menu.objects.create(id=1, title='设置')
+Menu.objects.create(id=2, title='订单信息管理')
+Menu.objects.create(id=3, title='买家信息管理')
 
 Permission.objects.create(id=1, name='用户管理', url='/backend/admin/list/', method='GET', menu_id=1, parents_id=None)
 Permission.objects.create(id=2, name='用户添加', url='/backend/admin/add/', method='POST', menu_id=None, parents_id=1)
